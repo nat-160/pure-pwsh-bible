@@ -1,0 +1,23 @@
+* Strings
+** Trim leading and trailing white-space from string
+#+begin_src powershell
+  "    Hello,  World    ".Trim()
+  $name = "   John Black  "
+  $name.Trim()
+#+end_src
+** Trim all white-space from string and truncate spaces
+*** Example Function:
+#+begin_src powershell
+  function Trim-All($s){
+    ($s.Split() | where {-not [string]::IsNullOrWhiteSpace($_)}) -join " "
+  }
+#+end_src
+*** Example Usage
+#+begin_src
+  PS> Trim-All "    Hello,    World    "
+  Hello, World
+
+  PS> $name = "   John   Black  is     my    name.    "
+  PS> Trim-All $name
+  John Black is my name.
+#+end_src
