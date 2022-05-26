@@ -1,9 +1,12 @@
 * Strings
 ** Trim leading and trailing white-space from string
 #+begin_src powershell
-  "    Hello,  World    ".Trim()
-  $name = "   John Black  "
-  $name.Trim()
+  PS> "    Hello,  World    ".Trim()
+  Hello, World
+
+  PS> $name = "   John Black  "
+  PS> $name.Trim()
+  John Black
 #+end_src
 ** Trim all white-space from string and truncate spaces
 *** Example Function:
@@ -13,11 +16,17 @@
   }
 #+end_src
 *** Example Usage
-#+begin_src
+#+begin_src powershell
   PS> Trim-All "    Hello,    World    "
   Hello, World
 
   PS> $name = "   John   Black  is     my    name.    "
   PS> Trim-All $name
   John Black is my name.
+#+end_src
+** Use regex on a string
+*** TODO pain
+*** Example Function
+#+begin_src powershell
+
 #+end_src
