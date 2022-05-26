@@ -9,24 +9,90 @@
   John Black
 #+end_src
 ** Trim all white-space from string and truncate spaces
-*** Example Function:
 #+begin_src powershell
-  function Trim-All($s){
-    ($s.Split() | where {-not [string]::IsNullOrWhiteSpace($_)}) -join " "
-  }
-#+end_src
-*** Example Usage
-#+begin_src powershell
-  PS> Trim-All "    Hello,    World    "
+  PS> [regex]::Replace("    Hello,    World    ","`\s+"," ").Trim()
   Hello, World
 
-  PS> $name = "   John   Black  is     my    name.    "
-  PS> Trim-All $name
+  PS> [regex]::Replace("   John   Black  is     my    name.    ","`\s+"," ").Trim()
   John Black is my name.
 #+end_src
-** Use regex on a string
-*** TODO pain
-*** Example Function
+** TODO Use regex on a string
 #+begin_src powershell
+  # Trim leading white-space
+  PS> [regex]::Replace("   hello", "^\s+","")
+  hello
 
+  # Validate a hex color
+  PS>
+
+  # Validate a hex color (invalid).
+  PS>
+#+end_src
+** Split a string on a delimiter
+#+begin_src powershell
+  PS> "apples,oranges,pears,grapes".Split(",")
+  apples
+  oranges
+  pears
+  grapes
+
+  # Cleaner method
+  PS> "1, 2, 3, 4, 5" -split ", "
+  1
+  2
+  3
+  4
+  5
+
+  # Multi char delimiters work too!
+  PS> "hello---world---my---name---is---john" -split "---"
+  hello
+  world
+  my
+  name
+  is
+  john
+#+end_src
+** Change a string to lowercase
+#+begin_src powershell
+  PS> "HELLO".ToLower()
+  hello
+
+  PS> "HeLlO".ToLower()
+  hello
+
+  PS> "hello".ToLower()
+  hello
+#+end_src
+** Change a string to uppercase
+#+begin_src powershell
+  PS> "hello".ToUpper()
+  HELLO
+
+  PS> "HeLlO".ToUpper()
+  HELLO
+
+  PS> "HELLO".ToUpper()
+  HELLO
+#+end_src
+** TODO Reverse a string case
+** Trim quotes from a string
+#+begin_src powershell
+  PS> $var="'Hello', `"World`""
+  PS> $var.replace("'","").replace("`"","")
+  Hello, World
+#+end_src
+** Strip all instance of pattern from string
+#+begin_src powershell
+  # Regex version
+  PS> [regex]::Replace("The Quick Brown Fox", "[aeiou]", "")
+  Th Qck Brwn Fx
+
+  # String only
+  PS> "The Quick Brown Fox".Replace(" ","")
+  TheQuickBrownFox
+
+  # String works for regex
+  PS> [regex]::Replace("The Quick Brown Fox", "Quick ", "")
+  The Brown Fox
 #+end_src
