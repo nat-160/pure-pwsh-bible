@@ -1,4 +1,4 @@
-* Strings
+* TODO STRINGS
 ** Trim leading and trailing white-space from string
 #+begin_src powershell
   PS> "    Hello,  World    ".Trim()
@@ -96,3 +96,259 @@
   PS> [regex]::Replace("The Quick Brown Fox", "Quick ", "")
   The Brown Fox
 #+end_src
+** TODO Strip pattern from start of string
+** TODO Strip pattern from end of string
+** TODO Percent-encode a string
+** TODO Decode a percent-encoded string
+** TODO Check if string contains a sub-string
+** TODO Check if string starts with sub-string
+** TODO Check if string ends with sub-string
+* TODO ARRAYS
+** TODO Reverse an array
+** TODO Remove duplicate array elements
+** TODO Random array element
+** TODO Cycle through an array
+** TODO Toggle between two values
+* TODO LOOPS
+** TODO Loop over a range of numbers
+** TODO Loop over a variable range of numbers
+** TODO Loop over an array
+** TODO Loop over an array with an index
+** TODO Loop over the contents of a file
+** TODO Loop over files and directories
+* TODO FILE HANDLING
+** TODO Read a file to a string
+** TODO Read a file to an array (by line)
+** TODO Get the first N lines of a file
+** TODO Get the last N lines of a file
+** TODO Get the number of lines in a file
+** TODO Count files or directories in directory
+** TODO Create an empty file
+** TODO Extract lines between two markers
+* TODO FILE PATHS
+** TODO Get the directory name of a file path
+** TODO Get the base-name of a file path
+* TODO VARIABLES
+** TODO Assign and access a variable using a variable
+** TODO Name a variable based on another variable
+* TODO ESCAPE SEQUENCES
+** TODO Text Colors
+** TODO Text Attributes
+** TODO Cursor Movement
+** TODO Erasing Text
+* TODO PARAMETER EXPANSION
+** TODO Indirection
+** TODO Replacement
+** TODO Length
+** TODO Expansion
+** TODO Case Modification
+** TODO Default Value
+
+* TODO BRACE EXPANSION
+** TODO Ranges
+** TODO String Lists
+* TODO CONDITIONAL EXPRESSIONS
+** TODO File Conditionals
+** TODO File Comparisons
+** TODO Variable Conditionals
+** TODO Variable Comparisons
+* TODO ARITHMETIC OPERATORS
+** TODO Assignment
+** TODO Arithmetic
+** TODO Bitwise
+** TODO Logical
+** TODO Miscellaneous
+* TODO ARITHMETIC
+** TODO Simpler syntax to set variables
+** TODO Ternary Tests
+* TODO TRAPS
+** TODO Do something on script exit
+** TODO Ignore terminal interrupt (CTRL+C, SIGINT)
+** TODO React to window resize
+** TODO Do something before every command
+** TODO Do something when a shell function or a sourced file finishes executing
+* TODO PERFORMANCE
+** TODO Disable Unicode
+* TODO OBSOLETE SYNTAX
+** TODO Shebang
+** TODO Command Substitution
+** TODO Function Declaration
+* TODO INTERNAL VARIABLES
+** Get the location to the pwsh binary
+#+begin_src powershell
+  $PSHOME
+#+end_src
+** Get the version of the current running bash process
+#+begin_src powershell
+  # Via Host (emulator dependent)
+  $Host.Version
+  # Via engine
+  $PSVersionTable.PSVersion
+#+end_src
+** Open the user's preferred text editor
+#+begin_src powershell
+  # NOTE: Acts as if file has been double clicked
+  Invoke-Item $file
+#+end_src
+** Get the name of the current function
+#+begin_src powershell
+  # Current function
+  (Get-PSCallStack)[0]
+
+  # Alternative
+  $MyInvocation.MyCommand
+
+  # Parent function
+  (Get-PSCallStack)[1]
+
+  # So on and so forth
+  (Get-PSCallStack)[2]
+  (Get-PSCallStack)[3]
+
+  # All functions including parents
+  Get-PSCallStack
+#+end_src
+** Get the host-name of the system
+#+begin_src powershell
+  # Proper
+  [System.Environment]::MachineName
+
+  # Golfed
+  [Environment]::MachineName
+#+end_src
+** Get the architecture of the Operating System
+#+begin_src powershell
+  # Proper
+  [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture
+
+  # Golfed
+  [Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture
+
+  # Bit Width
+  [Environment]::Is64BitOperatingSystem
+#+end_src
+** Get the name of the Operating System / Kernel
+#+begin_src powershell
+  # Proper
+  [System.Environment]::OSVersion
+
+  # Golfed
+  [Environment]::OSVersion
+#+end_src
+** Get the current working directory
+#+begin_src powershell
+  $PWD
+#+end_src
+** Get the number of seconds the script has been running
+#+begin_src powershell
+  (Get-History -Count 1).EndExecutionTime - (Get-History 1).StartExecutionTime
+#+end_src
+** Get a pseudorandom integer
+#+begin_src powershell
+ Get-Random
+#+end_src
+* TODO INFORMATION ABOUT THE TERMINAL
+** Get the terminal size in lines and columns (from a script)
+#+begin_src powershell
+  $Host.UI.RawUI.WindowSize
+#+end_src
+** TODO Get the terminal size in pixels
+#+begin_src powershell
+
+#+end_src
+** Get the current cursor position
+#+begin_src powershell
+  $Host.UI.RawUI.CursorPosition
+#+end_src
+* TODO CONVERSION
+** Convert a hex color to RGB
+*** Example Function
+#+begin_src powershell
+  function hex_to_rgb([string]$1){
+    # Usage: hex_to_rgb "#FFFFFF"
+    #        hex_to_rgb "000000"
+    $t = $1.TrimStart("#")
+    $r = [Convert]::ToInt32($t.Substring(0,2),16)
+    $g = [Convert]::ToInt32($t.Substring(2,2),16)
+    $b = [Convert]::ToInt32($t.Substring(4,2),16)
+    return "$r $g $b"
+  }
+#+end_src
+*** Example Usage
+#+begin_src powershell
+  PS> hex_to_rgb "#FFFFFF"
+  255 255 255
+#+end_src
+** Convert an RGB color to hex
+*** Example Function
+#+begin_src powershell
+  function rgb_to_hex($1,$2,$3){
+    # Usage: rgb_to_hex "r" "g" "b"
+    $r = [Convert]::ToString($1,16)
+    $r+= [Convert]::ToString($2,16)
+    $r+= [Convert]::ToString($3,16)
+    return "#"+$r.ToUpper()
+  }
+#+end_src
+*** Example Usage
+#+begin_src powershell
+  PS> rgb_to_hex "255" "255" "255"
+  #FFFFFF
+#+end_src
+* TODO CODE GOLF
+** Shorter for loop syntax
+#+begin_src powershell
+  # ForEach-Object
+  1..10|%{$_}
+  # foreach loop
+  foreach($i in 1..10){$i}
+  # for loop
+  for($i=0;$i++ -lt 10;){$i}
+#+end_src
+** Shorter infinite loops
+#+begin_src powershell
+  # Normal method
+  while(1){"hi"}
+
+  # Shorter
+  for(;;){"hi"}
+#+end_src
+** TODO Shorter function declaration
+** TODO Shorter if syntax
+** TODO Simpler case statement to set variable
+** Misc/Notes
+https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands?view=powershell-7.2
+* TODO OTHER
+** Use =Start-Sleep= as an alternative to the =sleep= command
+#+begin_src powershell
+  Start-Sleep 1
+  Start-Sleep 0.1
+  Start-Sleep 30
+#+end_src
+** Check if a program is in the user's PATH
+#+begin_src powershell
+  # As a test.
+  if(Get-Command executable_name -CommandType Application -ErrorAction Ignore){
+    # Program is in PATH.
+  }
+
+  # Inverse
+  if(-not(Get-Command executable_name -CommandType Application -ErrorAction Ignore)){
+    # Program is not in PATH.
+  }
+
+  # Golfed example
+  if(gcm convert -c Ap 2>$null){
+    "error: convert is not installed, exiting..."
+    exit 1
+  }
+#+end_src
+** TODO Get the current date using strftime
+** TODO Get the username of the current user
+** TODO Generate a UUID V4
+** TODO Progress bars
+** TODO Get the list of functions in a script
+** TODO Bypass shell aliases
+** TODO Bypass shell functions
+** TODO Run a command in the background
+** TODO Capture function return without command substitution
