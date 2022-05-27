@@ -132,10 +132,62 @@
 ** TODO Assign and access a variable using a variable
 ** TODO Name a variable based on another variable
 * TODO ESCAPE SEQUENCES
-** TODO Text Colors
-** TODO Text Attributes
+** Text Colors
+Using $PSStyle (added PowerShell 7.2)
+#+begin_src powershell
+  # Using 16 Console Color names
+  $PSStyle.Foreground.<ConsoleColor>
+  $PSStyle.Background.<ConsoleColor>
+  # Using RGB values
+  $PSStyle.Foreground.FromRgb(<R>,<G>,<B>)
+  $PSStyle.Background.FromRgb(<R>,<G>,<B>)
+  # Using HEX values
+  $PSStyle.Foreground.FromRgb(0x<hexcolor>)
+  $PSStyle.Background.FromRgb(0x<hexcolor>)
+#+end_src
+Pre PowerShell 7.2
+| Sequence             | What does it do?                        | Value |
+|----------------------+-----------------------------------------+-------|
+| =`e[38;5;<NUM>m=       | Set text foreground color.              | =0-255= |
+| =`e[48;5;<NUM>m=       | Set text background color.              | =0-255= |
+| =`e[38;2;<R>;<G>;<B>m= | Set text foreground color to RGB color. | R,G,B |
+| =`e[48;2;<R>;<G>;<B>m= | Set text background color to RGB color. | R,G,B |
+** Text Attributes
+$PSStyle available for PowerShell 7.2+, =$PSStyle.Bold= will create bold text, append =Off= to turn an effect off ie: =$PSStyle.BoldOff=
+| Sequence | What does it do                   | $PSStyle      |
+|----------+-----------------------------------+---------------|
+| `e[m     | Reset text formatting and colors. | Reset         |
+| `e[1m    | Bold text.                        | Bold          |
+| `e[2m    | Faint text.                       | N/A           |
+| `e[3m    | Italic text.                      | Italic        |
+| `e[4m    | Underline text.                   | Underline     |
+| `e[5m    | Blinking text.                    | Blink         |
+| `e[7m    | Highlighted text.                 | Reverse       |
+| `e[8m    | Hidden text.                      | Hidden        |
+| `e[9m    | Strike-through text.              | Strikethrough |
 ** TODO Cursor Movement
+Untested
+| Sequence            | What does it do?                    | Value       |
+|---------------------+-------------------------------------+-------------|
+| `e[<LINE>;<COLUMN>H | Move cursor to absolute position.   | line,column |
+| `e[H                | Move cursor to home position (0,0). |             |
+| `e[<NUM>A           | Move cursor up N lines.             | num         |
+| `e[<NUM>B           | Move cursor down N lines.           | num         |
+| `e[<NUM>C           | Move cursor right N columns.        | num         |
+| `e[<NUM>D           | Move cursor left N columns.         | num         |
+| `e[s                | Save cursor position.               |             |
+| `e[u                | Restore cursor position.            |             |
 ** TODO Erasing Text
+Untested
+| Sequence | What does it do?                                         |
+|----------+----------------------------------------------------------|
+| `e[K     | Erase from cursor position to end of line.               |
+| `e[1K    | Erase from cursor position to start of line.             |
+| `e[2K    | Erase the entire current line.                           |
+| `e[J     | Erase from the current line to the bottom of the screen. |
+| `e[1J    | Erase from the current line to the top of the screen.    |
+| `e[2J    | Clear the screen.                                        |
+| `e2J`e[H | Clear the screen and move cursor to =0,0=.                 |
 * TODO PARAMETER EXPANSION
 ** TODO Indirection
 ** TODO Replacement
@@ -145,8 +197,42 @@
 ** TODO Default Value
 
 * TODO BRACE EXPANSION
-** TODO Ranges
-** TODO String Lists
+** Ranges
+#+begin_src powershell
+  # Syntax: <START>..<END>
+
+  # Print numbers 1-100
+  1..100
+
+  # Print range of floats
+  11..19 | ForEach-Object {$_/10}
+  # As strings
+  1..9 | ForEach-Object {"1.$_"}
+
+  # Print chars a-z. (PowerShell 6+)
+  'a'..'z'
+  'A'..'Z'
+
+  # Nesting (0A,1A,...,9Z)
+  'A'..'Z' | ForEach-Object {0..9 -join $_}
+
+  # Print zero-padded numbers.
+  1..100 | ForEach-Object {"$_".PadLeft(2,'0')}
+
+  # Change increment amount
+  1..5 | ForEach-Object {$_*2-1}
+
+  # Increment backwards
+  5..-5
+#+end_src
+** String Lists
+#+begin_src powershell
+  "apples","oranges","pears","grapes"
+
+  # Example Usage:
+  # Remove dirs Movies, Music and ISOS from ~/Downloads/.
+  "Movies","Music","ISOS" | ForEach-Object {Remove-Item -Force "~/Downloads/"+$_}
+#+end_src
 * TODO CONDITIONAL EXPRESSIONS
 ** TODO File Conditionals
 ** TODO File Comparisons
@@ -178,7 +264,7 @@
 #+begin_src powershell
   $PSHOME
 #+end_src
-** Get the version of the current running bash process
+** Get the version of the current running pwsh process
 #+begin_src powershell
   # Via Host (emulator dependent)
   $Host.Version
@@ -296,7 +382,7 @@
   #FFFFFF
 #+end_src
 * TODO CODE GOLF
-** Shorter for loop syntax
+** Shorter =for= loop syntax
 #+begin_src powershell
   # ForEach-Object
   1..10|%{$_}
@@ -314,8 +400,8 @@
   for(;;){"hi"}
 #+end_src
 ** TODO Shorter function declaration
-** TODO Shorter if syntax
-** TODO Simpler case statement to set variable
+** TODO Shorter =if= syntax
+** TODO Simpler =case= statement to set variable
 ** Misc/Notes
 https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands?view=powershell-7.2
 * TODO OTHER
@@ -343,12 +429,46 @@ https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-
     exit 1
   }
 #+end_src
-** TODO Get the current date using strftime
-** TODO Get the username of the current user
-** TODO Generate a UUID V4
-** TODO Progress bars
-** TODO Get the list of functions in a script
+** Get the current date using =Get-Date=
+#+begin_src powershell
+  Get-Date
+#+end_src
+** Get the username of the current user
+#+begin_src powershell
+  # Proper
+  [System.Environment]::UserName
+
+  # Golfed
+  [Environment]::UserName
+#+end_src
+** Generate a UUID V4
+#+begin_src powershell
+  New-Guid
+#+end_src
+** Progress bars
+#+begin_src powershell
+  # NOTE: Activity is required default parameter
+  Write-Progress "[Title]" -PercentComplete $Elapsed
+
+  # Set total length in chars
+  $PSStyle.Progress.MaxWidth = 18
+  # 0 for whole console, minimum 18, default 120
+#+end_src
+** Get the list of functions in a script
+#+begin_src powershell
+  Get-ChildItem Function:
+#+end_src
 ** TODO Bypass shell aliases
 ** TODO Bypass shell functions
 ** TODO Run a command in the background
-** TODO Capture function return without command substitution
+** Capture function return without command substitution
+*Self note*: I think the original is a "pass by reference" method
+#+begin_src powershell
+  function to_upper([ref]$1){
+    $1.Value = $1.Value.ToUpper()
+  }
+
+  $foo="bar"
+  to_upper $foo
+  $foo # BAR
+#+end_src
