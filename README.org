@@ -75,7 +75,32 @@
   PS> "HELLO".ToUpper()
   HELLO
 #+end_src
-** TODO Reverse a string case
+** Reverse a string case
+*** Example Function:
+#+begin_src powershell
+  function reverse_case([string]$1){
+    $s = ""
+    forEach($c in $1.ToCharArray()){
+      if($c -ge [char]'a'){
+        $s+="$c".ToUpper()
+      } else {
+        $s+="$c".ToLower()
+      }
+    }
+    return $s
+  }
+#+end_src
+*** Example Usage:
+#+begin_src powershell
+  PS> reverse_case "hello"
+  HELLO
+
+  PS> reverse_case "HeLlO"
+  hElLo
+
+  PS> reverse_case "HELLO"
+  hello
+#+end_src
 ** Trim quotes from a string
 #+begin_src powershell
   PS> $var="'Hello', `"World`""
@@ -96,35 +121,273 @@
   PS> [regex]::Replace("The Quick Brown Fox", "Quick ", "")
   The Brown Fox
 #+end_src
+** TODO Strip first occurrence of pattern from string
 ** TODO Strip pattern from start of string
 ** TODO Strip pattern from end of string
 ** TODO Percent-encode a string
 ** TODO Decode a percent-encoded string
-** TODO Check if string contains a sub-string
-** TODO Check if string starts with sub-string
-** TODO Check if string ends with sub-string
+** Check if string contains a sub-string
+*** Using a test:
+#+begin_src powershell
+  if ($var -like "*sub_string*") {
+    "sub_string is in var."
+  }
+
+  # Inverse (substring not in string).
+  if($var -notlike "*sub_string*") {
+    "sub_string is not in var."
+  }
+
+  # This works for arrays too!
+  if($arr -like "*sub_string*") {
+    "sub_string is in array."
+  }
+#+end_src
+*** Using a switch statement:
+#+begin_src powershell
+  switch ($var) {
+    {$_ -like "*sub_string*"}{
+      # Do stuff
+    }
+    {$_ -like "*sub_string2*"}{
+      # Do more stuff
+    }
+    default{
+      # Else
+    }
+  }
+#+end_src
+** Check if string starts with sub-string
+#+begin_src powershell
+  if ($var -like "sub_string*") {
+    "var starts with sub_string."
+  }
+
+  # Inverse (var does not start with sub_string).
+  if ($var -notlike "sub_string*") {
+    "var does not start with sub_string."
+  }
+#+end_src
+** Check if string ends with sub-string
+#+begin_src powershell
+  if ($var -like "*sub_string") {
+    "var ends with sub_string."
+  }
+
+  # Inverse (var does not end with sub_string).
+  if ($var -notlike "*sub_string") {
+    "var does not end with sub_string."
+  }
+#+end_src
 * TODO ARRAYS
-** TODO Reverse an array
-** TODO Remove duplicate array elements
-** TODO Random array element
-** TODO Cycle through an array
-** TODO Toggle between two values
+** Reverse an array
+#+begin_src powershell
+  # Using range operator
+  (1,2,3,4,5)[4..0]
+
+  # Dynamic
+  $arr = "red","blue","green"
+  $arr[$arr.Count..0]
+#+end_src
+** Remove duplicate array elements
+#+begin_src powershell
+  # With Select-Object
+  (1,1,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,5) | Select-Object -Unique
+
+  # With Sort-Object
+  $arr = "red","red","green","blue","blue"
+  $arr | Sort-Object -Unique
+#+end_src
+** Random array element
+#+begin_src powershell
+  $array = "red","green","blue","yellow","brown"
+  Get-Random -InputObject $array
+
+  # Directly pass
+  Get-Random -InputObject (1,2,3,4,5,6,7)
+#+end_src
+** Cycle through an array
+#+begin_src powershell
+  $arr = "a","b","c","d"
+
+  function cycle{
+    $arr[${i}?${i}:0]
+    $script:i=$i -ge $arr.Count-1?0:++$i
+  }
+#+end_src
+** Toggle between two values
+#+begin_src powershell
+  $arr = $True, $False
+
+  function cycle{
+    $arr[${i}?${i}:0]
+    $script:i=$i -ge $arr.Count-1?0:++$i
+  }
+#+end_src
 * TODO LOOPS
-** TODO Loop over a range of numbers
-** TODO Loop over a variable range of numbers
-** TODO Loop over an array
-** TODO Loop over an array with an index
-** TODO Loop over the contents of a file
-** TODO Loop over files and directories
+** Loop over a range of numbers
+#+begin_src powershell
+  # Loop from 0-100 with foreach
+  foreach($i in 0..100){$i}
+
+  # With for
+  for($i=0;$i -le 100;$i++){$i}
+
+  # With ForEach-Object
+  0..100 | ForEach-Object{$_}
+#+end_src
+** Loop over a variable range of numbers
+#+begin_src powershell
+  # Loop from 0-VAR
+  $VAR=50
+
+  # With foreach
+  foreach($i in 0..$VAR){$i}
+
+  # With for
+  for($i=0;$i -le $VAR;$i++){$i}
+
+  # With ForEach-Object
+  0..$VAR | ForEach-Object {$_}
+#+end_src
+** Loop over an array
+#+begin_src powershell
+  $arr = "apples","oranges","tomatoes"
+
+  # With foreach
+  foreach($element in $arr){$element}
+
+  # With ForEach-Object
+  $arr | ForEach-Object {$_}
+#+end_src
+** Loop over an array with an index
+#+begin_src powershell
+  $arr = "apples","oranges","tomatoes"
+
+  # With for
+  for($i=0;$i -lt $arr.Count;$i++){$arr[$i]}
+
+  # With foreach
+  foreach($i in 0..($arr.Count-1)){$arr[$i]}
+
+  # With ForEach-Object
+  0..($arr.Count-1) | ForEach-Object{$_}
+#+end_src
+** Loop over the contents of a file
+#+begin_src powershell
+  # With for
+  $file = Get-Content "file"
+  for($i=0;$i -lt $file.Count;$i++){$file[$i]}
+
+  # With foreach
+  foreach($l in (Get-Content "file")){$l}
+
+  # With ForEach-Object
+  Get-Content "file" | ForEach-Object{$_}
+#+end_src
+** Loop over files and directories
+*Self Note*: Populates list with file globbing. Apparently trying to avoid listing files. Not possible with PowerShell
+#+begin_src powershell
+  # All files
+  foreach($file in (Get-ChildItem)){
+    $file
+  }
+
+  # PNG files in dir
+  foreach($file in (Get-ChildItem ~/Pictures/*.png)){
+    $file
+  }
+
+  # Iterate over directories
+  foreach($dir in (Get-ChildItem ~/Downloads -Directory)){
+    $dir
+  }
+
+  # "Brace Expansion"
+  foreach($file in ("file1","file2","subdir/file3"|%{"/path/to/parentdir/"+$_})){
+    $file
+  }
+
+  # Iterate recursively
+  foreach($file in (Get-ChildItem ~/Pictures -Recurse -File){
+    $file
+  }
+#+end_src
 * TODO FILE HANDLING
-** TODO Read a file to a string
-** TODO Read a file to an array (by line)
-** TODO Get the first N lines of a file
-** TODO Get the last N lines of a file
-** TODO Get the number of lines in a file
-** TODO Count files or directories in directory
-** TODO Create an empty file
-** TODO Extract lines between two markers
+** Read a file to a string
+#+begin_src powershell
+  (Get-Content "file") -join "`n"
+#+end_src
+** Read a file to an array (by line)
+#+begin_src powershell
+  # All lines
+  Get-Content "file"
+
+  # Remove blank lines
+  Get-Content "file" | Where-Object {$_}
+
+  # Remove blank/whitespace lines
+  Get-Content "file" | Where-Object {$_.Trim()}
+#+end_src
+** Get the first N lines of a file
+#+begin_src powershell
+  Get-Content "file" -TotalCount <n>
+#+end_src
+** Get the last N lines of a file
+#+begin_src powershell
+  Get-Content "file" -Tail <n>
+#+end_src
+** Get the number of lines in a file
+#+begin_src powershell
+  # Normal
+  (Get-Content "file").Count
+
+  # Memory friendly (.NET 4+)
+  [System.IO.File]::ReadLines("file") | Measure-Object -Line
+
+  # Memory friendly
+  $count = 0
+  $reader = [System.IO.File]::OpenText("file")
+  while($reader.ReadLine() -ne $null){
+    $count++
+  }
+  $count
+#+end_src
+** Count files or directories in directory
+#+begin_src powershell
+  # Count all files in dir.
+  (Get-ChildItem ~/Downloads).Count
+
+  # Count all dirs in a dir.
+  (Get-ChildItem ~/Downloads -Directory).Count
+
+  # Count all jpg files in dir.
+  (Get-ChildItem ~/Pictures/*.jpg).Count
+#+end_src
+** Create an empty file
+#+begin_src powershell
+  # Shortest
+  "">file
+
+  # Proper methods
+  New-Item "file"
+  "" | Out-File "file"
+#+end_src
+** Extract lines between two markers
+*** Example Function
+#+begin_src powershell
+  function extract($1,$2,$3){
+    $lines=$extract=""
+    Get-Content $1 | %{
+      if($extract -and $_ -ne $3){
+        $lines+=$_+"`n"
+      }
+      if($_ -eq $2){$extract=$True}
+      if($_ -eq $3){$extract=$False}
+    }
+    return $lines
+  }
+#+end_src
 * TODO FILE PATHS
 ** TODO Get the directory name of a file path
 ** TODO Get the base-name of a file path
@@ -213,8 +476,9 @@ Untested
   'a'..'z'
   'A'..'Z'
 
-  # Nesting (0A,1A,...,9Z)
-  'A'..'Z' | ForEach-Object {0..9 -join $_}
+  # Nesting (A0,A1,...,Z9)
+  foreach($l in 'A'..'Z'){foreach($i in 0..9){"$l$i"}}
+  # NOTE: situation where foreach and ForEach-Object are NOT interchangeable
 
   # Print zero-padded numbers.
   1..100 | ForEach-Object {"$_".PadLeft(2,'0')}
@@ -224,6 +488,10 @@ Untested
 
   # Increment backwards
   5..-5
+
+  # Variable range
+  $VAR=50
+  1..50
 #+end_src
 ** String Lists
 #+begin_src powershell
