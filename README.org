@@ -389,11 +389,38 @@
   }
 #+end_src
 * TODO FILE PATHS
-** TODO Get the directory name of a file path
-** TODO Get the base-name of a file path
+** Get the directory name of a file path
+#+begin_src powershell
+  Split-Path ~/Pictures/Wallpapers/1.jpg -Resolve
+
+  Split-Path ~/Pictures/Downloads -Resolve
+#+end_src
+** Get the base-name of a file path
+#+begin_src powershell
+  Split-Path ~/Pictures/Wallpapers/1.jpg -Leaf
+
+  Split-Path ~/Pictures/Wallpapers/1.jpg .jpg -LeafBase
+
+  Split-Path ~/Pictures/Downloads/ -Leaf
+#+end_src
 * TODO VARIABLES
-** TODO Assign and access a variable using a variable
-** TODO Name a variable based on another variable
+** Assign and access a variable using a variable
+#+begin_src powershell
+  $hello_world = "value"
+
+  # Create the variable name.
+  $var = "world"
+  $ref = "hello_$var"
+
+  # Print the value of the variable name stored in 'hello_$var'.
+  Get-Variable -ValueOnly $ref
+#+end_src
+** Name a variable based on another variable
+#+begin_src powershell
+  $var = "world"
+  Set-Variable "hello_$var" -Value "value"
+  $hello_world
+#+end_src
 * TODO ESCAPE SEQUENCES
 ** Text Colors
 Using $PSStyle (added PowerShell 7.2)
@@ -453,8 +480,20 @@ Untested
 | `e2J`e[H | Clear the screen and move cursor to =0,0=.                 |
 * TODO PARAMETER EXPANSION
 ** TODO Indirection
+*** Access a variable based on the value of =VAR.=
+#+begin_src powershell
+  Get-Variable -ValueOnly $VAR
+#+end_src
+*** Expand list of variable starting with =VAR=.
+#+begin_src powershell
+  Get-Variable "VAR*"
+#+end_src
 ** TODO Replacement
-** TODO Length
+** Length
+| Parameter   | What does it do?                                            |
+|-------------+-------------------------------------------------------------|
+| $VAR.Length | Length of array in elements, or length of var in characters |
+| $ARR.Count  | Length of array in elements.                                |
 ** TODO Expansion
 ** TODO Case Modification
 ** TODO Default Value
@@ -541,7 +580,7 @@ Untested
 #+end_src
 ** Open the user's preferred text editor
 #+begin_src powershell
-  # NOTE: Acts as if file has been double clicked
+  # NOTE: Uses Window Manager defaults
   Invoke-Item $file
 #+end_src
 ** Get the name of the current function
