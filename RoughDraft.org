@@ -16,17 +16,19 @@
   PS> [regex]::Replace("   John   Black  is     my    name.    ","`\s+"," ").Trim()
   John Black is my name.
 #+end_src
-** TODO Use regex on a string
+** Use regex on a string
 #+begin_src powershell
   # Trim leading white-space
   PS> [regex]::Replace("   hello", "^\s+","")
   hello
 
   # Validate a hex color
-  PS>
+  PS> "#FFFFFF" -match "^(#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$"
+  True
 
   # Validate a hex color (invalid).
-  PS>
+  PS> "red" -match "^(#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$"
+  False
 #+end_src
 ** Split a string on a delimiter
 #+begin_src powershell
@@ -121,11 +123,42 @@
   PS> [regex]::Replace("The Quick Brown Fox", "Quick ", "")
   The Brown Fox
 #+end_src
-** TODO Strip first occurrence of pattern from string
-** TODO Strip pattern from start of string
-** TODO Strip pattern from end of string
-** TODO Percent-encode a string
-** TODO Decode a percent-encoded string
+** Strip first occurrence of pattern from string
+#+begin_src powershell
+  [regex]::new("[aeiou]").Replace("The Quick Brown Fox","",1)
+#+end_src
+** Strip pattern from start of string
+*** Example Function:
+#+begin_src powershell
+  function lstrip([string]$1,[string]$2){
+    return ($1.StartsWith($2)) ? $1.Substring($2.Length) : $1
+  }
+#+end_src
+*** Example Usage:
+#+begin_src shell
+  PS> lstrip "The Quick Brown Fox" "The "
+  Quick Brown Fox
+#+end_src
+** Strip pattern from end of string
+*** Example Function:
+#+begin_src powershell
+  function rstrip([string]$1,[string]$2){
+    return ($1.EndsWith($2)) ? $1.Substring(0,$1.Length-$2.Length) : $1
+  }
+#+end_src
+*** Example Usage:
+#+begin_src shell
+  PS> rstrip "The Quick Brown Fox" " Fox"
+  The Quick Brown
+#+end_src
+** Percent-encode a string
+#+begin_src powershell
+  [System.Web.HTTPUtility]::UrlEncode("https://github.com/n4t-dog/pure-pwsh-bible")
+#+end_src
+** Decode a percent-encoded string
+#+begin_src powershell
+  [System.Web.HTTPUtility]::UrlDecode("https%3a%2f%2fgithub.com%2fn4t-dog%2fpure-pwsh-bible")
+#+end_src
 ** Check if string contains a sub-string
 *** Using a test:
 #+begin_src powershell
@@ -552,11 +585,44 @@ Untested
 ** TODO Logical
 ** TODO Miscellaneous
 * TODO ARITHMETIC
-** TODO Simpler syntax to set variables
-** TODO Ternary Tests
+** Simpler syntax to set variables
+#+begin_src powershell
+# Simple math
+$var = 1 + 2
+
+# Decrement/Increment variable
+$var ++
+$var --
+$var += 1
+$var -= 1
+
+# Using variables
+$var = $var2 * $arr[2]
+#+end_src
+** Ternary Tests
+PowerShell 7+
+#+begin_src powershell
+  # Set the value of var to var2 if var2 is greater than var.
+  # $var: variable to set.
+  # $var2 -gt $var: Condition to test.
+  # ? $var2: If the test succeeds.
+  # : $var: If the test fails.
+  $var = ($var2 -gt $var) ? $var2 : $var
+#+end_src
 * TODO TRAPS
-** TODO Do something on script exit
-** TODO Ignore terminal interrupt (CTRL+C, SIGINT)
+** Do something on script exit
+#+begin_src powershell
+  # Clear screen on script exit.
+  Try{
+    # Whole script here
+  } Finally {
+    Clear-Host
+  }
+#+end_src
+** Ignore terminal interrupt (CTRL+C, SIGINT)
+#+begin_src powershell
+  [System.Console]::TreatControlCAsInput = $true
+#+end_src
 ** TODO React to window resize
 ** TODO Do something before every command
 ** TODO Do something when a shell function or a sourced file finishes executing
