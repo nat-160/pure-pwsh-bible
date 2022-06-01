@@ -83,7 +83,7 @@
   function reverse_case([string]$1){
     $s = ""
     forEach($c in $1.ToCharArray()){
-      if($c -ge [char]'a'){
+      if($c -ge "a"){
         $s+="$c".ToUpper()
       } else {
         $s+="$c".ToLower()
@@ -479,15 +479,15 @@ Pre PowerShell 7.2
 $PSStyle available for PowerShell 7.2+, =$PSStyle.Bold= will create bold text, append =Off= to turn an effect off ie: =$PSStyle.BoldOff=
 | Sequence | What does it do                   | $PSStyle      |
 |----------+-----------------------------------+---------------|
-| `e[m     | Reset text formatting and colors. | Reset         |
-| `e[1m    | Bold text.                        | Bold          |
-| `e[2m    | Faint text.                       | N/A           |
-| `e[3m    | Italic text.                      | Italic        |
-| `e[4m    | Underline text.                   | Underline     |
-| `e[5m    | Blinking text.                    | Blink         |
-| `e[7m    | Highlighted text.                 | Reverse       |
-| `e[8m    | Hidden text.                      | Hidden        |
-| `e[9m    | Strike-through text.              | Strikethrough |
+| =`e[m=     | Reset text formatting and colors. | Reset         |
+| =`e[1m=    | Bold text.                        | Bold          |
+| =`e[2m=    | Faint text.                       | N/A           |
+| =`e[3m=    | Italic text.                      | Italic        |
+| =`e[4m=    | Underline text.                   | Underline     |
+| =`e[5m=    | Blinking text.                    | Blink         |
+| =`e[7m=    | Highlighted text.                 | Reverse       |
+| =`e[8m=    | Hidden text.                      | Hidden        |
+| =`e[9m=    | Strike-through text.              | Strikethrough |
 ** TODO Cursor Movement
 Untested
 | Sequence            | What does it do?                    | Value       |
@@ -515,7 +515,7 @@ Untested
 ** TODO Indirection
 *** Access a variable based on the value of =VAR.=
 #+begin_src powershell
-  Get-Variable -ValueOnly $VAR
+  Get-Variable $VAR
 #+end_src
 *** Expand list of variable starting with =VAR=.
 #+begin_src powershell
@@ -527,10 +527,49 @@ Untested
 |-------------+-------------------------------------------------------------|
 | $VAR.Length | Length of array in elements, or length of var in characters |
 | $ARR.Count  | Length of array in elements.                                |
-** TODO Expansion
-** TODO Case Modification
-** TODO Default Value
+** Expansion
+| Parameter                                   | What does it do?                     |
+|---------------------------------------------+--------------------------------------|
+| =$VAR.Substring($OFFSET)=                     | Remove first =N= chars from variable   |
+| =$VAR.Substring($OFFSET,$LENGTH)=             | Get substring from =N= to =N= character. |
+| =$VAR.Substring(0,$OFFSET)=                   | Get first =N= chars from variable.     |
+| =$VAR.Substring(0,$VAR.Length-$OFFSET)=       | Remove last =N= chars from variable.   |
+| =$VAR.Substring($VAR.Length-$OFFSET)=         | Get last =N= chars from variable.      |
+| =$VAR.Substring($OFFSET,$VAR.Length-$OFFSET)= | Cut first =N= chars and last =N= chars   |
+** Case Modification
+| Code                                            | What does it do?           |
+|-------------------------------------------------+----------------------------|
+| $VAR.Substring(0,1).ToUpper()+$VAR.Substring(1) | Uppercase first character. |
+| $VAR.ToUpper()                                  | Uppercase all characters.  |
+| (Get-Culture).TextInfo.ToTitleCase($VAR)        | Uppercase all words.       |
+| $VAR.Substring(0,1).ToLower()+$VAR.Substring(1) | Lowercase first character. |
+| $VAR.ToLower()                                  | Lowercase all characters.  |
+** Default Value
+*** As a function parameter
+#+begin_src powershell
+  function f($1="value"){
+    $1
+  }
 
+  function f{
+    param($1="value")
+    $1
+  }
+#+end_src
+*** As a variable
+#+begin_src powershell
+  # Null-Coalescing (PowerShell 7+)
+  $VAR ??= "value"
+
+  # Ternary (PowerShell 7+)
+  $VAR = ($VAR) ? $VAR : "value"
+
+  # If
+  if (!$VAR) { $VAR="value" }
+
+  # If-Else
+  $VAR = if ($VAR) { $VAR } else { "value" }
+#+end_src
 * TODO BRACE EXPANSION
 ** Ranges
 #+begin_src powershell
@@ -574,16 +613,122 @@ Untested
   "Movies","Music","ISOS" | ForEach-Object {Remove-Item -Force "~/Downloads/"+$_}
 #+end_src
 * TODO CONDITIONAL EXPRESSIONS
-** TODO File Conditionals
-** TODO File Comparisons
-** TODO Variable Conditionals
-** TODO Variable Comparisons
+** File Conditionals
+*** If file exists.
+#+begin_src powershell
+  Test-Path file
+#+end_src
+*** If file exists and is a directory.
+#+begin_src powershell
+  Test-Path file -PathType Container
+#+end_src
+*** If file exists and is a file.
+#+begin_src powershell
+  Test-Path file -PathType Leaf
+#+end_src
+*** If file exists and is a symbolic link.
+#+begin_src powershell
+  (Get-Item file -ErrorAction Ignore).LinkType -eq "SymbolicLink"
+#+end_src
+*** If file exists and its size is greater than zero.
+#+begin_src powershell
+  (Get-Item file -ErrorAction Ignore).Size
+#+end_src
+*** If file has been modified since last read.
+Note: most programs do not update last access time anymore, so this type of conditional will output true regardless of actual status in both sh and pwsh.
+#+begin_src powershell
+  ((Get-Item file).LastWriteTime - (Get-Item file).LastAccessTime) -gt 0
+#+end_src
+*** Windows Permissions
+#+begin_src powershell
+  Get-Acl file
+#+end_src
+*** Unix Permissions
+Note: does not show sticky bit
+#+begin_src powershell
+  (Get-Item file).UnixMode
+#+end_src
+** File Comparisons
+*** If =file= is newer than =file2= /(uses modification time)/
+#+begin_src powershell
+  ((Get-Item file).LastWriteTime - (Get-Item file2).LastWriteTime) -gt 0
+#+end_src
+** Variable Conditionals
+*** Shell Options
+#+begin_src powershell
+  $PSSessionOption
+#+end_src
+*** If variable has a value assigned.
+#+begin_src powershell
+  $var
+#+end_src
+*** If variable is a name reference.
+#+begin_src powershell
+  $var.GetType() -eq ([ref]0).GetType()
+#+end_src
+*** If the length of string is zero.
+#+begin_src powershell
+  # Operator
+  $var.Length -eq 0
+
+  # Directly
+  if (!$var.Length) { "0" }
+#+end_src
+*** If the length of string is non-zero.
+#+begin_src powershell
+  # Operator
+  $var.Length -ne 0
+
+  # Directly
+  if ($var.Length) { $var }
+#+end_src
+** Variable Comparisons
+| Expression   | What does it do?          |
+|--------------+---------------------------|
+| =var -eq var2= | Equal to.                 |
+| =var -ne var2= | Not equal to.             |
+| =var -lt var2= | Less than.                |
+| =var -le var2= | Less than or equal to.    |
+| =var -gt var2= | Greater than.             |
+| =var -ge var2= | Greater than or equal to. |
+Add =i= or =c= between =-= and operator for case insensitive or case sensitive, respectively.
 * TODO ARITHMETIC OPERATORS
-** TODO Assignment
-** TODO Arithmetic
-** TODO Bitwise
-** TODO Logical
+** Assignment
+| Operators | What does it do?                              |
+|-----------+-----------------------------------------------|
+| ===         | Initialize or change the value of a variable. |
+** Arithmetic
+| Operators        | What does it do? |
+|------------------+------------------|
+| =+=                | Addition         |
+| =-=                | Subtraction      |
+| =*=                | Multiplication   |
+| =/=                | Division         |
+| =[Math]::Pow(a,b)= | Exponentiation   |
+| =%=                | Modulo           |
+| =+==               | Increment/Join   |
+| =-==               | Decrement a var  |
+| =*==               | Multiply a var   |
+| =/==               | Divide a var     |
+| =%==               | Remainder of var |
+** Bitwise
+| Operators | What does it do?     |
+|-----------+----------------------|
+| =-shl=      | Bitwise left shift   |
+| =-shr=      | Bitwise right shift  |
+| =-band=     | Bitwise AND          |
+| =-bor=      | Bitwise OR           |
+| =-bxor=     | Bitwise XOR          |
+| =-bnot=     | Bitwise NOT (32 bit) |
+** Logical
+| Operators | What does it do? |
+|-----------+------------------|
+| =-not=, =!=   | NOT              |
+| =-and=      | AND              |
+| =-or=       | OR               |
+| =-xor=      | XOR              |
 ** TODO Miscellaneous
+https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.2
 * TODO ARITHMETIC
 ** Simpler syntax to set variables
 #+begin_src powershell
@@ -630,6 +775,10 @@ PowerShell 7+
 ** TODO Disable Unicode
 * TODO OBSOLETE SYNTAX
 ** TODO Shebang
+To automatically run a ps1 script through a Unix style shell add a interpreter directive. This functionality is extremely broken.
+#+begin_src shell
+  #!/usr/bin/env pwsh
+#+end_src
 ** TODO Command Substitution
 ** TODO Function Declaration
 * TODO INTERNAL VARIABLES
