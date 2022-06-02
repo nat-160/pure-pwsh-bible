@@ -5,7 +5,7 @@ A rewrite of [https://github.com/dylanaraps/pure-bash-bible] in PowerShell.
 
 ## Trim leading and trailing white-space from string
 **Example Function:**
-```powershell
+```pwsh
 function trim_string {
     # Usage: trim_string "   example   string    "
     # "   example   string    " | trim_string
@@ -15,7 +15,7 @@ function trim_string {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>trim_string "    Hello,  World    "
 Hello, World
 
@@ -28,7 +28,7 @@ or call .Trim() directly
 ```
 ## Trim all white-space from string and truncate spaces
 **Example Function:**
-```powershell
+```pwsh
 function trim_all {
     # Usage: trim_all "   example   string    "
     # "   example   string    " | trim_all
@@ -38,7 +38,7 @@ function trim_all {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>trim_all "    Hello,    World    "
 Hello, World
 
@@ -48,7 +48,7 @@ John Black is my name.
 ```
 ## Use regex on a string
 **Example Function:**
-```powershell
+```pwsh
 function regex($Pattern){
     # Usage: regex "regex" "string"
     # "string" | regex "regex"
@@ -60,7 +60,7 @@ function regex($Pattern){
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS># Trim leading white-space.
 PS>regex "   hello" -Pattern "^\s*(.*)"
 hello
@@ -74,7 +74,7 @@ PS>regex "red" -Pattern '^(#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$'
 # no output (invalid)
 ```
 **Example Usage in script:**
-```shell
+```powershell
 function is_hex_color {
     $input+$args | % {
         if ($_ -match '^(#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$') {
@@ -92,7 +92,7 @@ is_hex_color $color || $color="#FFFFFF"
 ```
 ## Split a string on a delimiter
 **Example Function:**
-```powershell
+```pwsh
 function split($Delimiter){
     # Usage: split "delimiter" "string"
     # split "string" -Delimiter "delimiter"
@@ -101,7 +101,7 @@ function split($Delimiter){
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>split "," "apples,oranges,pears,grapes"
 apples
 oranges
@@ -133,7 +133,7 @@ d
 ```
 ## Change a string to lowercase
 **Example Function:**
-```powershell
+```pwsh
 function lower {
     # Usage: lower "string"
     # "string" | lower
@@ -143,7 +143,7 @@ function lower {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>lower "HELLO"
 hello
 
@@ -155,7 +155,7 @@ hello
 ```
 ## Change a string to uppercase
 **Example Function:**
-```powershell
+```pwsh
 function upper {
     # Usage: upper "string"
     # "string" | upper
@@ -165,7 +165,7 @@ function upper {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>upper "hello"
 HELLO
 
@@ -177,7 +177,7 @@ HELLO
 ```
 ## Reverse a string case
 **Example Function:**
-```powershell
+```pwsh
 function reverse_case {
     # Usage: reverse_case "string"
     # "string" | reverse_case
@@ -195,7 +195,7 @@ function reverse_case {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>reverse_case "hello"
 HELLO
 
@@ -207,7 +207,7 @@ hello
 ```
 ## Trim quotes from a string
 **Example Function:**
-```powershell
+```pwsh
 function trim_quotes {
     # Usage: trim_quotes "string"
     # "string" | trim_quotes
@@ -217,14 +217,14 @@ function trim_quotes {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>$var="'Hello', `"World`""
 PS>trim_quotes $var
 Hello, World
 ```
 ## Strip all instances of pattern from string
 **Example Function:**
-```powershell
+```pwsh
 function strip_all($Pattern) {
     # Usage: strip_all "pattern" "string"
     # "string" | strip_all "pattern"
@@ -234,7 +234,7 @@ function strip_all($Pattern) {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>strip_all "[aeiou]" "The Quick Brown Fox"
 Th Qck Brwn Fx
 
@@ -246,7 +246,7 @@ The Brown Fox
 ```
 ## Strip first occurrence of pattern from string
 **Example Function:**
-```powershell
+```pwsh
 function strip {
     # Usage: strip "pattern" "string"
     # "string" | strip "pattern"
@@ -256,7 +256,7 @@ function strip {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>strip "[aeiou]" "The Quick Brown Fox"
 Th Quick Brown Fox
 
@@ -265,7 +265,7 @@ TheQuick Brown Fox
 ```
 ## Strip pattern from start of string
 **Example Function:**
-```powershell
+```pwsh
 function lstrip($Pattern) {
     # Usage: lstrip "pattern" "string"
     # "string" | lstrip "pattern"
@@ -279,13 +279,13 @@ function lstrip($Pattern) {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>lstrip "The " "The Quick Brown Fox"
 Quick Brown Fox
 ```
 ## Strip pattern from end of string
 **Example Function:**
-```powershell
+```pwsh
 function rstrip($Pattern) {
     # Usage: rstrip "pattern" "string"
     # "string" | rstrip "pattern"
@@ -299,13 +299,13 @@ function rstrip($Pattern) {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>rstrip " Fox" "The Quick Brown Fox"
 The Quick Brown
 ```
 ## Percent-encode a string
 **Example Function:**
-```powershell
+```pwsh
 function urlencode {
     # Usage: urlencode "string"
     # "string" | urlencode
@@ -315,13 +315,13 @@ function urlencode {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>urlencode "https://github.com/n4t-dog/pure-pwsh-bible"
 https%3a%2f%2fgithub.com%2fn4t-dog%2fpure-pwsh-bible
 ```
 ## Decode a percent-encoded string
 **Example Function:**
-```powershell
+```pwsh
 function urldecode {
     # Usage: urldecode "string"
     # "string" | urldecode
@@ -331,13 +331,13 @@ function urldecode {
 }
 ```
 **Example Usage:**
-```shell
+```powershell
 PS>urlencode "https%3a%2f%2fgithub.com%2fn4t-dog%2fpure-pwsh-bible"
 https://github.com/n4t-dog/pure-pwsh-bible
 ```
 ## Check if string contains a sub-string
 **Using a test:**
-```shell
+```powershell
 if ($var.Contains("sub_string")) {
     "sub_string is in var."
 }
@@ -353,7 +353,7 @@ if($arr -like "*sub_string*") {
 }
 ```
 **Using a case statement:**
-```shell
+```powershell
 switch ($var) {
     {$_.Contains("sub_string")}{
         # Do stuff
@@ -367,7 +367,7 @@ switch ($var) {
 }
 ```
 ## Check if string starts with sub-string
-```shell
+```powershell
 if ($var.StartsWith("sub_string*")) {
     "var starts with sub_string."
 }
@@ -378,7 +378,7 @@ if ($var -notlike "sub_string*") {
 }
 ```
 ## Check if string ends with sub-string
-```shell
+```powershell
 if ($var.EndsWith("sub_string")) {
     "var ends with sub_string."
 }
