@@ -980,9 +980,25 @@ https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-
 #+begin_src powershell
   Get-ChildItem Function:
 #+end_src
-** TODO Bypass shell aliases
-** TODO Bypass shell functions
+** Bypass shell aliases
+#+begin_src powershell
+echo "Using PowerShell's Write-Output"
+$alias = Get-Alias "echo"
+Remove-Item "Alias:echo"
+echo "Using echo from PATH"
+Set-Alias $alias.Name -Value $alias.Definition
+#+end_src
+** Bypass shell functions
+#+begin_src powershell
+$function = Get-Item "Function:prompt"
+Remove-Item "Function:prompt"
+# Prompt now displays "PS>"
+Set-Content "Function:prompt" $function
+#+end_src
 ** TODO Run a command in the background
+#+begin_src powershell
+& <commands>
+#+end_src
 ** Capture function return without command substitution
 *Self note*: I think the original is a "pass by reference" method
 #+begin_src powershell

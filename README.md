@@ -665,11 +665,9 @@ function extract($Opening,$Closing){
     $extract=0
     $input+$args | % {
         Get-Content $_ | % {
-            if($extract -and $_ -ne $Closing){
-                $_
-            }
-        if($_ -eq $Opening){$extract=$True}
-        if($_ -eq $Closing){$extract=$False}
+            if($extract -and $_ -ne $Closing){$_}
+            if($_ -eq $Opening){$extract=1}
+            if($_ -eq $Closing){$extract=0}
         }
     }
 }
@@ -680,3 +678,313 @@ function extract($Opening,$Closing){
 PS>extract ./README.md -Opening '```pwsh' -Closing '```'
 # Output here...
 ```
+# FILE PATHS
+## Get the directory name of a file path
+**Example Function:**
+```pwsh
+function dirname([switch]$Resolve){
+    # Usage: dirname "path" [-Resolve]
+    $input+$args | % {
+        Split-Path $_ -Resolve:$Resolve
+    }
+}
+```
+**Example Usage:**
+```powershell
+PS>dirname ~/Pictures/Wallpapers/1.jpg
+~/Pictures/Wallpapers
+
+PS>"~/Pictures/Downloads" | dirname -Resolve
+/home/user/Pictures
+```
+## Get the base-name of a file path
+**Example Function:**
+```pwsh
+function basename([switch]$Base){
+    # Usage: basename "path" [-Base]
+    $input+$args | % {
+        if ($Base) {
+            Split-Path $_ -LeafBase
+        } else {
+            Split-Path $_ -Leaf
+        }
+    }
+}
+```
+**Example Usage:**
+```shell
+PS>basename ~/Pictures/Wallpapers/1.jpg
+1.jpg
+
+PS>basename ~/Pictures/Wallpapers/1.jpg -Base
+1
+
+PS>"~/Pictures/Downloads/" | basename
+Downloads
+```
+# VARIABLES
+## Assign and access a variable using a variable
+```powershell
+PS>$hello_world = "value"
+
+# Create the variable name.
+PS>$var = "world"
+PS>$ref = "hello_$var"
+
+# Print the value of the variable name stored in 'hello_$var'.
+PS>Get-Variable -ValueOnly $ref
+value
+```
+## Name a variable based on another variable
+```powershell
+PS>$var = "world"
+PS>Set-Variable "hello_$var" -Value "value"
+PS>$hello_world
+value
+```
+# ESCAPE SEQUENCES
+## Text Colors
+| Sequence                  | What does it do?                            | Value       |
+|---------------------------|---------------------------------------------|-------------|
+| `` `e[38;5;<NUM>m``       | Set text foreground color.                  | `0-255`     |
+| `` `e[48;5;<NUM>m``       | Set text background color.                  | `0-255`     |
+| `` `e[38;2;<R>;<G>;<B>m`` | Set the text foreground color to RGB color. | `R`,`G`,`B` |
+| `` `e[38;2;<R>;<G>;<B>m`` | Set the text background color to RGB color. | `R`,`G`,`B` |
+Using `$PSStyle` (PowerShell 7.2+)
+```powershell
+# Using the 16 Console Color names
+$PSStyle.Foreground.<ConsoleColor>
+$PSStyle.Background.<ConsoleColor>
+# Using RGB values
+$PSStyle.Foreground.FromRgb(<R>,<G>,<B>)
+$PSStyle.Background.FromRgb(<R>,<G>,<B>)
+# Using HEX values
+$PSStyle.Foreground.FromRgb(0x<hexcolor>)
+$PSStyle.Background.FromRgb(0x<hexcolor>)
+```
+## Text Attributes
+Reset a single format by adding 20 to escape sequence, `` `e[22m`` resets both Bold and Faint.
+Using `$PSStyle` (PowerShell 7.2+): `$PSStyle.Bold` will create bold text, `$PSStyle.BoldOff` will turn off bold text.
+| Sequence   | What does it do?                  | $PSStyle Var  |
+|------------|-----------------------------------|---------------|
+| `` `e[m``  | Reset text formatting and colors. | Reset         |
+| `` `e[1m`` | Bold text.                        | Bold          |
+| `` `e[2m`` | Faint text.                       | N/A           |
+| `` `e[3m`` | Italic text.                      | Italic        |
+| `` `e[4m`` | Underline text.                   | Underline     |
+| `` `e[5m`` | Blinking text.                    | Blink         |
+| `` `e[6m`` | Flashing text.                    | N/A           |
+| `` `e[7m`` | Highlighted text.                 | Reverse       |
+| `` `e[8m`` | Hidden text.                      | Hidden        |
+| `` `e[9m`` | Strike-through text.              | Strikethrough |
+## Cursor Movement
+| Sequence                 | What does it do?                      | Value            |
+|--------------------------|---------------------------------------|------------------|
+| `` `e[<LINE>;<COLUMN>H`` | Move cursor to absolute position.     | `line`, `column` |
+| `` `e[H``                | Move cursor to home position (`0,0`). |                  |
+| `` `e[<NUM>A``           | Move cursor up N lines.               | `num`            |
+| `` `e[<NUM>B``           | Move cursor down N lines.             | `num`            |
+| `` `e[<NUM>C``           | Move cursor right N columns.          | `num`            |
+| `` `e[<NUM>D``           | Move cursor left N columns.           | `num`            |
+| `` `e[s``                | Save cursor position.                 |                  |
+| `` `e[u``                | Restore cursor position.              |                  |
+## Erasing Text
+| Sequence        | What does it do?                                         |
+|-----------------|----------------------------------------------------------|
+| `` `\e[K``      | Erase from cursor position to end of line.               |
+| `` `\e[1K``     | Erase from cursor position to start of line.             |
+| `` `\e[2K``     | Erase the entire current line.                           |
+| `` `\e[J``      | Erase from the current line to the bottom of the screen. |
+| `` `\e[1J``     | Erase from the current line to the top of the screen.    |
+| `` `\e[2J``     | Clear the screen.                                        |
+| `` `\e[2J\e[H`` | Clear the screen and move cursor to `0,0`.               |
+
+
+# "PARAMETER EXPANSION"
+## Indirection
+```powershell
+# Access a variable based on the value of VAR.
+Get-Variable $VAR
+
+# Expand list of variables starting with VAR.
+Get-Variable "VAR*"
+```
+## Replacement
+See STRINGS
+## Length
+| "Parameter"   | What does it do?                                            |
+|---------------|-------------------------------------------------------------|
+| `$VAR.Length` | Length of array in elements, or length of var in characters |
+| `$ARR.Count`  | Length of array in elements.                                |
+## Expansion
+| "Parameter"                                   | What does it do?                         |
+|-----------------------------------------------|------------------------------------------|
+| `$VAR.Substring($OFFSET)`                     | Remove first `N` chars from variable     |
+| `$VAR.Substring($OFFSET,$LENGTH)`             | Get substring from `N` to `N` character. |
+| `$VAR.Substring(0,$OFFSET)`                   | Get first `N` chars from variable.       |
+| `$VAR.Substring(0,$VAR.Length-$OFFSET)`       | Remove last `N` chars from variable.     |
+| `$VAR.Substring($VAR.Length-$OFFSET)`         | Get last `N` chars from variable.        |
+| `$VAR.Substring($OFFSET,$VAR.Length-$OFFSET)` | Cut first `N` chars and last `N` chars   |
+## Case Modification
+PowerShell has no built in methods for reverse case.
+| "Parameter"                                       | What does it do?           |
+|---------------------------------------------------|----------------------------|
+| `$VAR.Substring(0,1).ToUpper()+$VAR.Substring(1)` | Uppercase first character. |
+| `$VAR.ToUpper()`                                  | Uppercase all characters.  |
+| `(Get-Culture).TextInfo.ToTitleCase($VAR)`        | Uppercase all words.       |
+| `$VAR.Substring(0,1).ToLower()+$VAR.Substring(1)` | Lowercase first character. |
+| `$VAR.ToLower()`                                  | Lowercase all characters.  |
+## Default Value
+**Variables**
+| "Parameter"                   | What does it do?                             | CAVEAT  |
+|-------------------------------|----------------------------------------------|---------|
+| `$VAR ??= "STRING"`           | If `VAR` is unset, use `STRING` as its value | `PS 7+` |
+| `$VAR ?? "STRING"`            | Return `STRING` if `VAR` is unset            | `PS 7+` |
+| `$VAR = ($VAR)?$VAR:"STRING"` | If `VAR` is empty, use `STRING` as its value | `PS 7+` |
+| `($VAR)?$VAR:"STRING"`        | Return `STRING` if `VAR` is empty            | `PS 7+` |
+| `if(!$VAR){$VAR="STRING"}`    | If `VAR` is empty, use `STRING` as its value |         |
+**Function Parameters**
+```powershell
+# Set VAR to STRING if nothing is passed
+function f($VAR="STRING"){
+    $VAR
+}
+
+# Proper formatting
+function f{
+    param($VAR="STRING")
+    $VAR
+}
+```
+# "BRACE EXPANSION"
+## Ranges
+```powershell
+# Syntax: <START>..<END>
+
+# Print numbers 1-100
+1..100
+
+# Print range of floats
+11..19 | ForEach-Object {$_/10}
+# As strings
+1..9 | ForEach-Object {"1.$_"}
+
+# Print chars a-z. (PowerShell 6+)
+'a'..'z'
+'A'..'Z'
+
+# Nesting (A0,A1,...,Z9)
+foreach($l in 'A'..'Z'){foreach($i in 0..9){"$l$i"}}
+# NOTE: situation where foreach and ForEach-Object are NOT interchangeable
+
+# Print zero-padded numbers.
+1..100 | ForEach-Object {"$_".PadLeft(2,'0')}
+
+# Change increment amount
+1..5 | ForEach-Object {$_*2-1}
+
+# Increment backwards
+5..-5
+
+# Variable range
+$VAR=50
+1..$VAR
+```
+## String Lists
+```powershell
+"apples","oranges","pears","grapes"
+
+# Example Usage:
+# Remove dirs Movies, Music and ISOS from ~/Downloads/.
+"Movies","Music","ISOS" | ForEach-Object {
+    Remove-Item -Force "~/Downloads/"+$_
+}
+```
+
+# CONDITIONAL EXPRESSIONS
+## File Conditionals
+```powershell
+# If file exists
+Test-Path file
+
+# If file exists and is a directory.
+Test-Path file -PathType Container
+
+# If file exists and is a file.
+Test-Path file -PathType Leaf
+
+# If file exists and is a symbolic link.
+(Get-Item file -ErrorAction Ignore).LinkType -eq "SymbolicLink"
+
+# If file exists and its size is greater than zero.
+(Get-Item file -ErrorAction Ignore).Size
+
+# If file has been modified since last read.
+#Note: most programs do not update last access time anymore, so this type of conditional will output true regardless of actual status in both sh and pwsh.
+((Get-Item file).LastWriteTime - (Get-Item file).LastAccessTime) -gt 0
+
+# Windows Permissions
+Get-Acl file
+
+# Unix Permissions
+#Note: does not show sticky bit
+(Get-Item file).UnixMode
+```
+## File Comparisons
+**If `file` is newer than `file2` (*uses modification time*)**
+```powershell
+((Get-Item file).LastWriteTime - (Get-Item file2).LastWriteTime) -gt 0
+```
+## Variable Conditionals
+| Expression                     | What does it do?                 |
+|--------------------------------|----------------------------------|
+| `$PSSessionOption`             | Get shell options                |
+| `[bool]$VAR`                   | If variable has value assigned.  |
+| `$VAR. -is ([ref]0).GetType()` | If variable is name reference.   |
+| `$VAR.Length -eq 0`            | If length of string is zero.     |
+| `$VAR.Length -ne 0`            | If length of string is non-zero. |
+## Variable Comparisons
+Add `i` or `c` between `-` and operator for case insensitive or case sensitive, respectively.
+| Expression     | What does it do?          |
+|----------------|---------------------------|
+| `var -eq var2` | Equal to.                 |
+| `var -ne var2` | Not equal to.             |
+| `var -lt var2` | Less than.                |
+| `var -le var2` | Less than or equal to.    |
+| `var -gt var2` | Greater than.             |
+| `var -ge var2` | Greater than or equal to. |
+# ARITHMETIC OPERATORS
+## Assignment
+| Operators | What does it do?                              |
+|-----------|-----------------------------------------------|
+| `=`       | Initialize or change the value of a variable. |
+## Arithmetic
+| Operators          | What does it do?                                |
+|--------------------|-------------------------------------------------|
+| `+`                | Addition                                        |
+| `-`                | Subtraction                                     |
+| `*`                | Multiplication                                  |
+| `/`                | Division                                        |
+| `[Math]::Pow(x,y)` | Exponentiation                                  |
+| `%`                | Modulo                                          |
+| `+=`               | Plus-Equal (*Increment a variable.*)            |
+| `-=`               | Minus-Equal (*Decrement a variable.*)           |
+| `*=`               | Times-Equal (*Multiply a variable.*)            |
+| `/=`               | Slash-Equal (*Divide a variable.*)              |
+| `%=`               | Mod-Equal (*Remainder of dividing a variable.*) |
+## Bitwise
+| Operators | What does it do?     |
+|-----------|----------------------|
+| `-shl`    | Bitwise Left Shift   |
+| `-shr`    | Bitwise Right Shift  |
+| `-band`   | Bitwise AND          |
+| `-bor`    | Bitwise OR           |
+| `-bnot`   | Bitwise NOT (32 bit) |
+| `-bxor`   | Bitwise XOR          |
+## Logical
+| Operators  | What does it do? |
+|------------|------------------|
+| `-not`,`!` | NOT              |
+| `-and`     | AND              |
+| `-or`      | OR               |
+| `-xor`     | XOR              |
