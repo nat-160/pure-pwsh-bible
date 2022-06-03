@@ -1,5 +1,6 @@
 # pure-pwsh-bible
-A rewrite of [https://github.com/dylanaraps/pure-bash-bible] in PowerShell.
+Currently a rewrite of [pure bash bible](https://github.com/dylanaraps/pure-bash-bible) in PowerShell.
+Will possibly add content unique to PowerShell in the future.
 
 # STRINGS
 
@@ -387,4 +388,295 @@ if ($var.EndsWith("sub_string")) {
 if ($var -notlike "*sub_string") {
     "var does not end with sub_string."
 }
+```
+# ARRAYS
+## Reverse an array
+**Example Function:**
+```pwsh
+function reverse_array {
+    # Usage: reverse_array "array"
+    # "array" | reverse_array
+    $array = foreach($i in $input+$args){$i}
+    $array[$array.Count..0]
+}
+```
+**Example Usage:**
+```powershell
+PS>reverse_array 1 2 3 4 5
+5
+4
+3
+2
+1
+
+PS>$arr="red","blue","green"
+PS>$arr | reverse_array
+green
+blue
+red
+
+PS>("a","b","c")[0..2]
+c
+b
+a
+```
+## Remove duplicate array elements
+**Example Function:**
+```pwsh
+function remove_array_dups {
+  # Usage: remove_array_dups "array"
+  $array = foreach($i in $input+$args){$i}
+  $array | Select-Object -Unique
+}
+```
+**Example Usage:**
+```powershell
+PS>remove_array_dups 1 1 2 2 3 3 3 3 3 4 4 4 4 4 5 5 5 5 5 5
+1
+2
+3
+4
+5
+
+PS>$arr="red","red","green","blue","blue"
+PS>$arr | remove_array_dups
+red
+green
+blue
+```
+## Random array element
+**Example Function:**
+```pwsh
+function random_array_element {
+    # Usage: random_array_element "array"
+    $input+$args | Get-Random
+}
+```
+**Example Usage:**
+```powershell
+PS>$array="red","green","blue","yellow","brown"
+PS>random_array_element $array
+yellow
+
+# Multiple arguments can also be passed.
+PS>random_array_element 1 2 3 4 5 6 7
+3
+
+# Call Get-Random directly
+PS>Get-Random -InputObject $array
+red
+```
+
+## Cycle through an array
+```pwsh
+$arr = "a","b","c","d"
+
+function cycle {
+     $arr[$(if($i){$i}else{0})]
+     if($i -ge $arr.Count-1){$script:i=0}else{++$script:i}
+}
+```
+```powershell
+# Using null coalescing/ternary (PowerShell 7+)
+$arr = 1..10
+
+function cycle {
+    $arr[$i ?? 0]
+    $script:i=$i -ge $arr.Count-1?0:++$i
+}
+```
+## Toggle between two values
+```pwsh
+# The previous code could also be reused
+$arr = "one","two"
+
+function toggle {
+    $arr[$toggle ?? $false]
+    $script:toggle = -not $toggle
+}
+```
+# LOOPS
+## Loop over a range of numbers
+```powershell
+# Loop from 0-100 with for
+for($i=0;$i -le 100;$i++){$i}
+
+# With foreach
+foreach($i in 0..100){$i}
+
+# With ForEach-Object
+0..100 | ForEach-Object{$_}
+```
+## Loop over a variable range of numbers
+```powershell
+# Loop from 0-VAR.
+$VAR=50
+
+# With foreach
+foreach($i in 0..$VAR){$i}
+
+# With for
+for($i=0;$i -le $VAR;$i++){$i}
+
+# With ForEach-Object
+0..$VAR | ForEach-Object {$_}
+```
+## Loop over an array
+```powershell
+$arr = "apples","oranges","tomatoes"
+
+# With for
+for($i=0;$i -lt $arr.Count;$i++){$arr[$i]}
+
+# With foreach
+foreach($element in $arr){$element}
+
+# With ForEach-Object
+$arr | ForEach-Object {$_}
+```
+## Loop over an array with an index
+```powershell
+$arr = "apples","oranges","tomatoes"
+
+# With for
+for($i=0;$i -lt $arr.Count;$i++){$arr[$i]}
+
+# With foreach
+foreach($i in 0..($arr.Count-1)){$arr[$i]}
+
+# With ForEach-Object
+0..($arr.Count-1) | ForEach-Object{$arr[$_]}
+```
+## Loop over the contents of a file
+```powershell
+# With for
+$file = Get-Content "file"
+for($i=0;$i -lt $file.Count;$i++){$file[$i]}
+
+# With foreach
+foreach($l in (Get-Content "file")){$l}
+
+# With ForEach-Object
+Get-Content "file" | ForEach-Object{$_}
+```
+## Loop over files and directories
+```powershell
+# All files
+foreach($file in (Get-ChildItem)){
+    $file
+}
+
+# PNG files in dir
+foreach($file in (Get-ChildItem ~/Pictures/*.png)){
+    $file
+}
+
+# Iterate over directories
+foreach($dir in (Get-ChildItem ~/Downloads -Directory)){
+    $dir
+}
+
+# "Brace Expansion"
+foreach($file in ("file1","file2","subdir/file3"|%{"/path/to/parentdir/"+$_})){
+    $file
+}
+
+# Iterate recursively
+foreach($file in (Get-ChildItem ~/Pictures -Recurse -File){
+    $file
+}
+```
+# FILE HANDLING
+## Read a file to a string
+```powershell
+(Get-Content "file") -join "`n"
+```
+## Read a file to an array (*by line*)
+```powershell
+# All lines
+Get-Content "file"
+
+# Remove blank lines
+Get-Content "file" | Where-Object {$_}
+```
+## Get the first N lines of a file
+```powershell
+Get-Content "file" -TotalCount $N
+```
+## Get the last N lines of a file
+```powershell
+Get-Content "file" -Tail $N
+```
+## Get the number of lines in a file
+```powershell
+(Get-Content "file").Count
+
+# Memory friendly
+$count = 0
+$reader = [System.IO.File]::OpenText("file")
+while($reader.ReadLine() -ne $null){
+    $count++
+}
+$count
+
+# Memory friendly (.NET 4+)
+[System.IO.File]::ReadLines("file") | Measure-Object -Line
+```
+## Count files or directories in directory
+**Example Function:**
+```pwsh
+function count($Directory){
+    $count = 0
+    $input+$args | % {
+        $count+=(Get-ChildItem $_ -Directory:$Directory -Force).Count
+    }
+    $count
+}
+```
+**Example Usage:**
+```powershell
+# Count all files in a dir
+PS>count ~/Downloads
+232
+
+# Count all dirs in a dir.
+PS>"~/Downloads" | count -Directory
+45
+
+# Count all jpg files in dir.
+PS>(Get-ChildItem ~/Pictures/*.jpg).Count
+64
+```
+## Create an empty file
+```powershell
+# Shortest
+"">file
+
+# Longer alternatives
+$null>file
+New-Item "file"
+"" | Out-File "file"
+```
+## Extract lines between two markers
+**Example Function:**
+```pwsh
+function extract($Opening,$Closing){
+    # Usage: extract "opening marker" "closing marker" "file"
+    $extract=0
+    $input+$args | % {
+        Get-Content $_ | % {
+            if($extract -and $_ -ne $Closing){
+                $_
+            }
+        if($_ -eq $Opening){$extract=$True}
+        if($_ -eq $Closing){$extract=$False}
+        }
+    }
+}
+```
+**Example Usage:**
+```powershell
+# Extract code blocks from MarkDown file.
+PS>extract ./README.md -Opening '```pwsh' -Closing '```'
+# Output here...
 ```
