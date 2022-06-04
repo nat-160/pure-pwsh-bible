@@ -936,13 +936,13 @@ Get-Acl file
 ((Get-Item file).LastWriteTime - (Get-Item file2).LastWriteTime) -gt 0
 ```
 ## Variable Conditionals
-| Expression                     | What does it do?                 |
-|--------------------------------|----------------------------------|
-| `$PSSessionOption`             | Get shell options                |
-| `[bool]$VAR`                   | If variable has value assigned.  |
-| `$VAR. -is ([ref]0).GetType()` | If variable is name reference.   |
-| `$VAR.Length -eq 0`            | If length of string is zero.     |
-| `$VAR.Length -ne 0`            | If length of string is non-zero. |
+| Expression          | What does it do?                 |
+|---------------------|----------------------------------|
+| `$PSSessionOption`  | Get shell options                |
+| `[bool]$VAR`        | If variable has value assigned.  |
+| `$VAR -is [ref]`    | If variable is name reference.   |
+| `$VAR.Length -eq 0` | If length of string is zero.     |
+| `$VAR.Length -ne 0` | If length of string is non-zero. |
 ## Variable Comparisons
 Add `i` or `c` between `-` and operator for case insensitive or case sensitive, respectively.
 | Expression     | What does it do?          |
@@ -988,3 +988,117 @@ Add `i` or `c` between `-` and operator for case insensitive or case sensitive, 
 | `-and`     | AND              |
 | `-or`      | OR               |
 | `-xor`     | XOR              |
+# ARITHMETIC
+## Simpler syntax to set variables
+```powershell
+# Simple math
+$var=1+2
+
+# Decrement/Increment variable
+$var++
+$var--
+$var+=1
+$var-=1
+
+# Using variables
+$var = $var2 * $arr[2]
+```
+## Ternary Tests
+```powershell
+# NOTE: PowerShell 7+
+# Set the value of var to var2 if var2 is greater than var.
+# $var: variable to set.
+# $var2 -gt $var: Condition to test.
+# ? $var2: If the test succeeds.
+# : $var: If the test fails.
+$var = ($var2 -gt $var) ? $var2 : $var
+```
+# TRAPS
+## PowerShell Traps
+```powershell
+# Trap all errors
+trap {"Code here"}
+
+# Trap a specific error
+trap [Exception] {"Code here"}
+
+# Make all errors silent
+trap {continue}
+
+# Print error and stop script
+trap {$_;break}
+```
+## Do something on script exit
+```powershell
+# Clear screen on script exit.
+Try{
+    # Whole script here
+} Finally {
+    Clear-Host
+}
+```
+## Do something on PowerShell exit
+**NOTE:** when PowerShell exits, it unloads certain modules which will not function in the script block.
+```powershell
+# Exports session history to a file
+Register-EngineEvent -SourceIdentifier PowerShell.Exiting -SupportEvent -Action {
+    Get-History | Export-Clixml $Home/history.clixml
+}
+```
+## Ignore terminal interrupt (CTRL+C)
+```powershell
+[System.Console]::TreatControlCAsInput = $true
+```
+# PERFORMANCE
+## Measure performance
+```powershell
+Measure-Command {"command here"}
+```
+## Suppressing Output
+Pipelines introduce overhead by creating a script block rather than running inline code.
+```powershell
+# Best
+$null = $("code_here")
+
+# Alternative
+[void]$("code_here")
+
+# Traditional
+$("code_here") > $null
+
+# Avoid
+$("code_here") | Out-Null
+```
+## Strings/Arrays
+Arrays in PowerShell are immutable objects, with Strings being arrays of chars. This means adding to an array/string creates a completely new object every time, using a lot of memory. For smaller operations this is negligible but is very noticeable the larger the data.
+**ArrayList**
+```powershell
+$list = [Collections.ArrayList]::new()
+```
+**LinkedList**
+```powershell
+$list = [Collections.Generic.LinkedList[string]]::new()
+```
+**StringBuilder**
+```powershell
+$builder = [Text.StringBuilder]::new()
+```
+<!--INCOMPLETE-->
+## Write-Host
+The `Write-Host` command sends output directly to the console host. It is better to directly invoke `[Console]::WriteLine()`, and better yet to use `Write-Output`.
+## Functions/Script Blocks
+Function calls introduce overhead, so it is better to loop inside a function `N` times than to loop a function `N` times. Commands that use script blocks are also costly, so wrapping script block code in a function improves speed. (unclear why)
+## foreach vs ForEach-Object
+The `foreach` loop is faster than `ForEach-Object` in completion but more memory intensive. Individual results also show faster in `ForEach-Object` because only one item is loaded at a time, but there is no way to break/continue.
+
+# OBSOLETE SYNTAX
+## Shebang (not obsolete)
+```powershell
+#!/usr/bin/env pwsh
+```
+## PowerShell 7+/.NET Core
+With PowerShell moving to .NET Core on version 7 to make it cross platform, quite a few things changed. Read about them [here](https://docs.microsoft.com/en-us/powershell/scripting/whats-new/differences-from-windows-powershell?view=powershell-5.1).
+<!--INCOMPLETE-->
+## Windows PowerShell Version Differences
+Windows PowerShell has minor differences between each major release (2.0-5.x). Read about them [here](https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/whats-new/what-s-new-in-windows-powershell-50?view=powershell-5.1)
+<!--INCOMPLETE-->
