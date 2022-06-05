@@ -1,11 +1,13 @@
 # pure-pwsh-bible
 Currently a rewrite of [pure bash bible](https://github.com/dylanaraps/pure-bash-bible) in PowerShell.
-Will possibly add content unique to PowerShell in the future.
+In the process of adding content unique to PowerShell.
 
 # STRINGS
 
 ## Trim leading and trailing white-space from string
+
 **Example Function:**
+
 ```pwsh
 function trim_string {
     # Usage: trim_string "   example   string    "
@@ -15,7 +17,9 @@ function trim_string {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>trim_string "    Hello,  World    "
 Hello, World
@@ -27,8 +31,11 @@ John Black
 PS>"   or call .Trim() directly  ".Trim()
 or call .Trim() directly
 ```
+
 ## Trim all white-space from string and truncate spaces
+
 **Example Function:**
+
 ```pwsh
 function trim_all {
     # Usage: trim_all "   example   string    "
@@ -38,7 +45,9 @@ function trim_all {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>trim_all "    Hello,    World    "
 Hello, World
@@ -47,8 +56,11 @@ PS>$name="   John   Black  is     my    name.    "
 PS>$name | trim_all
 John Black is my name.
 ```
+
 ## Use regex on a string
+
 **Example Function:**
+
 ```pwsh
 function regex($Pattern){
     # Usage: regex "regex" "string"
@@ -60,7 +72,9 @@ function regex($Pattern){
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS># Trim leading white-space.
 PS>regex "   hello" -Pattern "^\s*(.*)"
@@ -74,7 +88,9 @@ PS># Validate a hex color (invalid).
 PS>regex "red" -Pattern '^(#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$'
 # no output (invalid)
 ```
+
 **Example Usage in script:**
+
 ```powershell
 function is_hex_color {
     $input+$args | % {
@@ -91,8 +107,11 @@ is_hex_color $color || $color="#FFFFFF"
 
 # Do stuff
 ```
+
 ## Split a string on a delimiter
+
 **Example Function:**
+
 ```pwsh
 function split($Delimiter){
     # Usage: split "delimiter" "string"
@@ -101,7 +120,9 @@ function split($Delimiter){
     ($input+$args) -split $Delimiter
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>split "," "apples,oranges,pears,grapes"
 apples
@@ -132,8 +153,11 @@ b
 c
 d
 ```
+
 ## Change a string to lowercase
+
 **Example Function:**
+
 ```pwsh
 function lower {
     # Usage: lower "string"
@@ -143,7 +167,9 @@ function lower {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>lower "HELLO"
 hello
@@ -154,8 +180,11 @@ hello
 PS>"hello".ToLower()
 hello
 ```
+
 ## Change a string to uppercase
+
 **Example Function:**
+
 ```pwsh
 function upper {
     # Usage: upper "string"
@@ -165,7 +194,9 @@ function upper {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>upper "hello"
 HELLO
@@ -176,8 +207,11 @@ HELLO
 PS>"HELLO".ToUpper()
 HELLO
 ```
+
 ## Reverse a string case
+
 **Example Function:**
+
 ```pwsh
 function reverse_case {
     # Usage: reverse_case "string"
@@ -195,7 +229,9 @@ function reverse_case {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>reverse_case "hello"
 HELLO
@@ -206,8 +242,11 @@ hElLo
 PS>reverse_case "HELLO"
 hello
 ```
+
 ## Trim quotes from a string
+
 **Example Function:**
+
 ```pwsh
 function trim_quotes {
     # Usage: trim_quotes "string"
@@ -217,14 +256,19 @@ function trim_quotes {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>$var="'Hello', `"World`""
 PS>trim_quotes $var
 Hello, World
 ```
+
 ## Strip all instances of pattern from string
+
 **Example Function:**
+
 ```pwsh
 function strip_all($Pattern) {
     # Usage: strip_all "pattern" "string"
@@ -234,7 +278,9 @@ function strip_all($Pattern) {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>strip_all "[aeiou]" "The Quick Brown Fox"
 Th Qck Brwn Fx
@@ -245,8 +291,11 @@ TheQuickBrownFox
 PS>"The Quick Brown Fox" | strip_all "Quick "
 The Brown Fox
 ```
+
 ## Strip first occurrence of pattern from string
+
 **Example Function:**
+
 ```pwsh
 function strip {
     # Usage: strip "pattern" "string"
@@ -256,7 +305,9 @@ function strip {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>strip "[aeiou]" "The Quick Brown Fox"
 Th Quick Brown Fox
@@ -264,8 +315,11 @@ Th Quick Brown Fox
 PS>"The Quick Brown Fox" | strip " "
 TheQuick Brown Fox
 ```
+
 ## Strip pattern from start of string
+
 **Example Function:**
+
 ```pwsh
 function lstrip($Pattern) {
     # Usage: lstrip "pattern" "string"
@@ -279,13 +333,18 @@ function lstrip($Pattern) {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>lstrip "The " "The Quick Brown Fox"
 Quick Brown Fox
 ```
+
 ## Strip pattern from end of string
+
 **Example Function:**
+
 ```pwsh
 function rstrip($Pattern) {
     # Usage: rstrip "pattern" "string"
@@ -299,45 +358,59 @@ function rstrip($Pattern) {
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>rstrip " Fox" "The Quick Brown Fox"
 The Quick Brown
 ```
+
 ## Percent-encode a string
+
 **Example Function:**
+
 ```pwsh
 function urlencode {
     # Usage: urlencode "string"
     # "string" | urlencode
     $input+$args | % {
-        [System.Web.HTTPUtility]::UrlEncode($_)
+        [Web.HTTPUtility]::UrlEncode($_)
     }
 }
 ```
+
 **Example Usage:**
 ```powershell
 PS>urlencode "https://github.com/n4t-dog/pure-pwsh-bible"
 https%3a%2f%2fgithub.com%2fn4t-dog%2fpure-pwsh-bible
 ```
+
 ## Decode a percent-encoded string
+
 **Example Function:**
+
 ```pwsh
 function urldecode {
     # Usage: urldecode "string"
     # "string" | urldecode
     $input+$args | % {
-        [System.Web.HTTPUtility]::UrlDecode($_)
+        [Web.HTTPUtility]::UrlDecode($_)
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>urlencode "https%3a%2f%2fgithub.com%2fn4t-dog%2fpure-pwsh-bible"
 https://github.com/n4t-dog/pure-pwsh-bible
 ```
+
 ## Check if string contains a sub-string
+
 **Using a test:**
+
 ```powershell
 if ($var.Contains("sub_string")) {
     "sub_string is in var."
@@ -353,7 +426,9 @@ if($arr -like "*sub_string*") {
     "sub_string is in array."
 }
 ```
+
 **Using a case statement:**
+
 ```powershell
 switch ($var) {
     {$_.Contains("sub_string")}{
@@ -367,7 +442,9 @@ switch ($var) {
     }
 }
 ```
+
 ## Check if string starts with sub-string
+
 ```powershell
 if ($var.StartsWith("sub_string*")) {
     "var starts with sub_string."
@@ -378,7 +455,9 @@ if ($var -notlike "sub_string*") {
     "var does not start with sub_string."
 }
 ```
+
 ## Check if string ends with sub-string
+
 ```powershell
 if ($var.EndsWith("sub_string")) {
     "var ends with sub_string."
@@ -389,9 +468,13 @@ if ($var -notlike "*sub_string") {
     "var does not end with sub_string."
 }
 ```
+
 # ARRAYS
+
 ## Reverse an array
+
 **Example Function:**
+
 ```pwsh
 function reverse_array {
     # Usage: reverse_array "array"
@@ -400,7 +483,9 @@ function reverse_array {
     $array[$array.Count..0]
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>reverse_array 1 2 3 4 5
 5
@@ -420,8 +505,11 @@ c
 b
 a
 ```
+
 ## Remove duplicate array elements
+
 **Example Function:**
+
 ```pwsh
 function remove_array_dups {
   # Usage: remove_array_dups "array"
@@ -429,7 +517,9 @@ function remove_array_dups {
   $array | Select-Object -Unique
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>remove_array_dups 1 1 2 2 3 3 3 3 3 4 4 4 4 4 5 5 5 5 5 5
 1
@@ -444,15 +534,20 @@ red
 green
 blue
 ```
+
 ## Random array element
+
 **Example Function:**
+
 ```pwsh
 function random_array_element {
     # Usage: random_array_element "array"
     $input+$args | Get-Random
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>$array="red","green","blue","yellow","brown"
 PS>random_array_element $array
@@ -468,6 +563,7 @@ red
 ```
 
 ## Cycle through an array
+
 ```pwsh
 $arr = "a","b","c","d"
 
@@ -485,7 +581,9 @@ function cycle {
     $script:i=$i -ge $arr.Count-1?0:++$i
 }
 ```
+
 ## Toggle between two values
+
 ```pwsh
 # The previous code could also be reused
 $arr = "one","two"
@@ -495,8 +593,11 @@ function toggle {
     $script:toggle = -not $toggle
 }
 ```
+
 # LOOPS
+
 ## Loop over a range of numbers
+
 ```powershell
 # Loop from 0-100 with for
 for($i=0;$i -le 100;$i++){$i}
@@ -507,7 +608,9 @@ foreach($i in 0..100){$i}
 # With ForEach-Object
 0..100 | ForEach-Object{$_}
 ```
+
 ## Loop over a variable range of numbers
+
 ```powershell
 # Loop from 0-VAR.
 $VAR=50
@@ -521,7 +624,9 @@ for($i=0;$i -le $VAR;$i++){$i}
 # With ForEach-Object
 0..$VAR | ForEach-Object {$_}
 ```
+
 ## Loop over an array
+
 ```powershell
 $arr = "apples","oranges","tomatoes"
 
@@ -534,7 +639,9 @@ foreach($element in $arr){$element}
 # With ForEach-Object
 $arr | ForEach-Object {$_}
 ```
+
 ## Loop over an array with an index
+
 ```powershell
 $arr = "apples","oranges","tomatoes"
 
@@ -547,7 +654,9 @@ foreach($i in 0..($arr.Count-1)){$arr[$i]}
 # With ForEach-Object
 0..($arr.Count-1) | ForEach-Object{$arr[$_]}
 ```
+
 ## Loop over the contents of a file
+
 ```powershell
 # With for
 $file = Get-Content "file"
@@ -559,7 +668,9 @@ foreach($l in (Get-Content "file")){$l}
 # With ForEach-Object
 Get-Content "file" | ForEach-Object{$_}
 ```
+
 ## Loop over files and directories
+
 ```powershell
 # All files
 foreach($file in (Get-ChildItem)){
@@ -586,12 +697,17 @@ foreach($file in (Get-ChildItem ~/Pictures -Recurse -File){
     $file
 }
 ```
+
 # FILE HANDLING
+
 ## Read a file to a string
+
 ```powershell
 (Get-Content "file") -join "`n"
 ```
+
 ## Read a file to an array (*by line*)
+
 ```powershell
 # All lines
 Get-Content "file"
@@ -599,31 +715,40 @@ Get-Content "file"
 # Remove blank lines
 Get-Content "file" | Where-Object {$_}
 ```
+
 ## Get the first N lines of a file
+
 ```powershell
 Get-Content "file" -TotalCount $N
 ```
+
 ## Get the last N lines of a file
+
 ```powershell
 Get-Content "file" -Tail $N
 ```
+
 ## Get the number of lines in a file
+
 ```powershell
 (Get-Content "file").Count
 
 # Memory friendly
 $count = 0
-$reader = [System.IO.File]::OpenText("file")
+$reader = [IO.File]::OpenText("file")
 while($reader.ReadLine() -ne $null){
     $count++
 }
 $count
 
 # Memory friendly (.NET 4+)
-[System.IO.File]::ReadLines("file") | Measure-Object -Line
+[IO.File]::ReadLines("file") | Measure-Object -Line
 ```
+
 ## Count files or directories in directory
+
 **Example Function:**
+
 ```pwsh
 function count($Directory){
     $count = 0
@@ -633,7 +758,9 @@ function count($Directory){
     $count
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 # Count all files in a dir
 PS>count ~/Downloads
@@ -647,7 +774,9 @@ PS>"~/Downloads" | count -Directory
 PS>(Get-ChildItem ~/Pictures/*.jpg).Count
 64
 ```
+
 ## Create an empty file
+
 ```powershell
 # Shortest
 "">file
@@ -657,8 +786,11 @@ $null>file
 New-Item "file"
 "" | Out-File "file"
 ```
+
 ## Extract lines between two markers
+
 **Example Function:**
+
 ```pwsh
 function extract($Opening,$Closing){
     # Usage: extract "opening marker" "closing marker" "file"
@@ -672,15 +804,21 @@ function extract($Opening,$Closing){
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 # Extract code blocks from MarkDown file.
 PS>extract ./README.md -Opening '```pwsh' -Closing '```'
 # Output here...
 ```
+
 # FILE PATHS
+
 ## Get the directory name of a file path
+
 **Example Function:**
+
 ```pwsh
 function dirname([switch]$Resolve){
     # Usage: dirname "path" [-Resolve]
@@ -689,7 +827,9 @@ function dirname([switch]$Resolve){
     }
 }
 ```
+
 **Example Usage:**
+
 ```powershell
 PS>dirname ~/Pictures/Wallpapers/1.jpg
 ~/Pictures/Wallpapers
@@ -697,8 +837,11 @@ PS>dirname ~/Pictures/Wallpapers/1.jpg
 PS>"~/Pictures/Downloads" | dirname -Resolve
 /home/user/Pictures
 ```
+
 ## Get the base-name of a file path
+
 **Example Function:**
+
 ```pwsh
 function basename([switch]$Base){
     # Usage: basename "path" [-Base]
@@ -711,7 +854,9 @@ function basename([switch]$Base){
     }
 }
 ```
+
 **Example Usage:**
+
 ```shell
 PS>basename ~/Pictures/Wallpapers/1.jpg
 1.jpg
@@ -722,8 +867,11 @@ PS>basename ~/Pictures/Wallpapers/1.jpg -Base
 PS>"~/Pictures/Downloads/" | basename
 Downloads
 ```
+
 # VARIABLES
+
 ## Assign and access a variable using a variable
+
 ```powershell
 PS>$hello_world = "value"
 
@@ -735,22 +883,29 @@ PS>$ref = "hello_$var"
 PS>Get-Variable -ValueOnly $ref
 value
 ```
+
 ## Name a variable based on another variable
+
 ```powershell
 PS>$var = "world"
 PS>Set-Variable "hello_$var" -Value "value"
 PS>$hello_world
 value
 ```
+
 # ESCAPE SEQUENCES
+
 ## Text Colors
+
 | Sequence                  | What does it do?                            | Value       |
 |---------------------------|---------------------------------------------|-------------|
 | `` `e[38;5;<NUM>m``       | Set text foreground color.                  | `0-255`     |
 | `` `e[48;5;<NUM>m``       | Set text background color.                  | `0-255`     |
 | `` `e[38;2;<R>;<G>;<B>m`` | Set the text foreground color to RGB color. | `R`,`G`,`B` |
 | `` `e[38;2;<R>;<G>;<B>m`` | Set the text background color to RGB color. | `R`,`G`,`B` |
+
 Using `$PSStyle` (PowerShell 7.2+)
+
 ```powershell
 # Using the 16 Console Color names
 $PSStyle.Foreground.<ConsoleColor>
@@ -762,9 +917,13 @@ $PSStyle.Background.FromRgb(<R>,<G>,<B>)
 $PSStyle.Foreground.FromRgb(0x<hexcolor>)
 $PSStyle.Background.FromRgb(0x<hexcolor>)
 ```
+
 ## Text Attributes
+
 Reset a single format by adding 20 to escape sequence, `` `e[22m`` resets both Bold and Faint.
+
 Using `$PSStyle` (PowerShell 7.2+): `$PSStyle.Bold` will create bold text, `$PSStyle.BoldOff` will turn off bold text.
+
 | Sequence   | What does it do?                  | $PSStyle Var  |
 |------------|-----------------------------------|---------------|
 | `` `e[m``  | Reset text formatting and colors. | Reset         |
@@ -777,7 +936,9 @@ Using `$PSStyle` (PowerShell 7.2+): `$PSStyle.Bold` will create bold text, `$PSS
 | `` `e[7m`` | Highlighted text.                 | Reverse       |
 | `` `e[8m`` | Hidden text.                      | Hidden        |
 | `` `e[9m`` | Strike-through text.              | Strikethrough |
+
 ## Cursor Movement
+
 | Sequence                 | What does it do?                      | Value            |
 |--------------------------|---------------------------------------|------------------|
 | `` `e[<LINE>;<COLUMN>H`` | Move cursor to absolute position.     | `line`, `column` |
@@ -788,7 +949,9 @@ Using `$PSStyle` (PowerShell 7.2+): `$PSStyle.Bold` will create bold text, `$PSS
 | `` `e[<NUM>D``           | Move cursor left N columns.           | `num`            |
 | `` `e[s``                | Save cursor position.                 |                  |
 | `` `e[u``                | Restore cursor position.              |                  |
+
 ## Erasing Text
+
 | Sequence        | What does it do?                                         |
 |-----------------|----------------------------------------------------------|
 | `` `\e[K``      | Erase from cursor position to end of line.               |
@@ -799,9 +962,10 @@ Using `$PSStyle` (PowerShell 7.2+): `$PSStyle.Bold` will create bold text, `$PSS
 | `` `\e[2J``     | Clear the screen.                                        |
 | `` `\e[2J\e[H`` | Clear the screen and move cursor to `0,0`.               |
 
-
 # "PARAMETER EXPANSION"
+
 ## Indirection
+
 ```powershell
 # Access a variable based on the value of VAR.
 Get-Variable $VAR
@@ -809,14 +973,20 @@ Get-Variable $VAR
 # Expand list of variables starting with VAR.
 Get-Variable "VAR*"
 ```
+
 ## Replacement
-See STRINGS
+
+See [STRINGS](#strings)
+
 ## Length
+
 | "Parameter"   | What does it do?                                            |
 |---------------|-------------------------------------------------------------|
 | `$VAR.Length` | Length of array in elements, or length of var in characters |
 | `$ARR.Count`  | Length of array in elements.                                |
+
 ## Expansion
+
 | "Parameter"                                   | What does it do?                         |
 |-----------------------------------------------|------------------------------------------|
 | `$VAR.Substring($OFFSET)`                     | Remove first `N` chars from variable     |
@@ -825,8 +995,11 @@ See STRINGS
 | `$VAR.Substring(0,$VAR.Length-$OFFSET)`       | Remove last `N` chars from variable.     |
 | `$VAR.Substring($VAR.Length-$OFFSET)`         | Get last `N` chars from variable.        |
 | `$VAR.Substring($OFFSET,$VAR.Length-$OFFSET)` | Cut first `N` chars and last `N` chars   |
+
 ## Case Modification
+
 PowerShell has no built in methods for reverse case.
+
 | "Parameter"                                       | What does it do?           |
 |---------------------------------------------------|----------------------------|
 | `$VAR.Substring(0,1).ToUpper()+$VAR.Substring(1)` | Uppercase first character. |
@@ -834,8 +1007,11 @@ PowerShell has no built in methods for reverse case.
 | `(Get-Culture).TextInfo.ToTitleCase($VAR)`        | Uppercase all words.       |
 | `$VAR.Substring(0,1).ToLower()+$VAR.Substring(1)` | Lowercase first character. |
 | `$VAR.ToLower()`                                  | Lowercase all characters.  |
+
 ## Default Value
+
 **Variables**
+
 | "Parameter"                   | What does it do?                             | CAVEAT  |
 |-------------------------------|----------------------------------------------|---------|
 | `$VAR ??= "STRING"`           | If `VAR` is unset, use `STRING` as its value | `PS 7+` |
@@ -843,7 +1019,9 @@ PowerShell has no built in methods for reverse case.
 | `$VAR = ($VAR)?$VAR:"STRING"` | If `VAR` is empty, use `STRING` as its value | `PS 7+` |
 | `($VAR)?$VAR:"STRING"`        | Return `STRING` if `VAR` is empty            | `PS 7+` |
 | `if(!$VAR){$VAR="STRING"}`    | If `VAR` is empty, use `STRING` as its value |         |
+
 **Function Parameters**
+
 ```powershell
 # Set VAR to STRING if nothing is passed
 function f($VAR="STRING"){
@@ -856,8 +1034,11 @@ function f{
     $VAR
 }
 ```
+
 # "BRACE EXPANSION"
+
 ## Ranges
+
 ```powershell
 # Syntax: <START>..<END>
 
@@ -890,7 +1071,9 @@ foreach($l in 'A'..'Z'){foreach($i in 0..9){"$l$i"}}
 $VAR=50
 1..$VAR
 ```
+
 ## String Lists
+
 ```powershell
 "apples","oranges","pears","grapes"
 
@@ -902,7 +1085,9 @@ $VAR=50
 ```
 
 # CONDITIONAL EXPRESSIONS
+
 ## File Conditionals
+
 ```powershell
 # If file exists
 Test-Path file
@@ -930,12 +1115,16 @@ Get-Acl file
 #Note: does not show sticky bit
 (Get-Item file).UnixMode
 ```
+
 ## File Comparisons
+
 **If `file` is newer than `file2` (*uses modification time*)**
 ```powershell
 ((Get-Item file).LastWriteTime - (Get-Item file2).LastWriteTime) -gt 0
 ```
+
 ## Variable Conditionals
+
 | Expression          | What does it do?                 |
 |---------------------|----------------------------------|
 | `$PSSessionOption`  | Get shell options                |
@@ -943,8 +1132,11 @@ Get-Acl file
 | `$VAR -is [ref]`    | If variable is name reference.   |
 | `$VAR.Length -eq 0` | If length of string is zero.     |
 | `$VAR.Length -ne 0` | If length of string is non-zero. |
+
 ## Variable Comparisons
+
 Add `i` or `c` between `-` and operator for case insensitive or case sensitive, respectively.
+
 | Expression     | What does it do?          |
 |----------------|---------------------------|
 | `var -eq var2` | Equal to.                 |
@@ -953,12 +1145,17 @@ Add `i` or `c` between `-` and operator for case insensitive or case sensitive, 
 | `var -le var2` | Less than or equal to.    |
 | `var -gt var2` | Greater than.             |
 | `var -ge var2` | Greater than or equal to. |
+
 # ARITHMETIC OPERATORS
+
 ## Assignment
+
 | Operators | What does it do?                              |
 |-----------|-----------------------------------------------|
 | `=`       | Initialize or change the value of a variable. |
+
 ## Arithmetic
+
 | Operators          | What does it do?                                |
 |--------------------|-------------------------------------------------|
 | `+`                | Addition                                        |
@@ -972,7 +1169,9 @@ Add `i` or `c` between `-` and operator for case insensitive or case sensitive, 
 | `*=`               | Times-Equal (*Multiply a variable.*)            |
 | `/=`               | Slash-Equal (*Divide a variable.*)              |
 | `%=`               | Mod-Equal (*Remainder of dividing a variable.*) |
+
 ## Bitwise
+
 | Operators | What does it do?     |
 |-----------|----------------------|
 | `-shl`    | Bitwise Left Shift   |
@@ -981,15 +1180,20 @@ Add `i` or `c` between `-` and operator for case insensitive or case sensitive, 
 | `-bor`    | Bitwise OR           |
 | `-bnot`   | Bitwise NOT (32 bit) |
 | `-bxor`   | Bitwise XOR          |
+
 ## Logical
+
 | Operators  | What does it do? |
 |------------|------------------|
 | `-not`,`!` | NOT              |
 | `-and`     | AND              |
 | `-or`      | OR               |
 | `-xor`     | XOR              |
+
 # ARITHMETIC
+
 ## Simpler syntax to set variables
+
 ```powershell
 # Simple math
 $var=1+2
@@ -1003,7 +1207,9 @@ $var-=1
 # Using variables
 $var = $var2 * $arr[2]
 ```
+
 ## Ternary Tests
+
 ```powershell
 # NOTE: PowerShell 7+
 # Set the value of var to var2 if var2 is greater than var.
@@ -1013,8 +1219,11 @@ $var = $var2 * $arr[2]
 # : $var: If the test fails.
 $var = ($var2 -gt $var) ? $var2 : $var
 ```
+
 # TRAPS
+
 ## PowerShell Traps
+
 ```powershell
 # Trap all errors
 trap {"Code here"}
@@ -1028,7 +1237,9 @@ trap {continue}
 # Print error and stop script
 trap {$_;break}
 ```
+
 ## Do something on script exit
+
 ```powershell
 # Clear screen on script exit.
 Try{
@@ -1037,25 +1248,36 @@ Try{
     Clear-Host
 }
 ```
+
 ## Do something on PowerShell exit
+
 **NOTE:** when PowerShell exits, it unloads certain modules which will not function in the script block.
+
 ```powershell
 # Exports session history to a file
 Register-EngineEvent -SourceIdentifier PowerShell.Exiting -SupportEvent -Action {
     Get-History | Export-Clixml $Home/history.clixml
 }
 ```
+
 ## Ignore terminal interrupt (CTRL+C)
+
 ```powershell
-[System.Console]::TreatControlCAsInput = $true
+[Console]::TreatControlCAsInput = $true
 ```
+
 # PERFORMANCE
+
 ## Measure performance
+
 ```powershell
 Measure-Command {"command here"}
 ```
+
 ## Suppressing Output
+
 Pipelines introduce overhead by creating a script block rather than running inline code.
+
 ```powershell
 # Best
 $null = $("code_here")
@@ -1069,36 +1291,341 @@ $("code_here") > $null
 # Avoid
 $("code_here") | Out-Null
 ```
+
 ## Strings/Arrays
+
 Arrays in PowerShell are immutable objects, with Strings being arrays of chars. This means adding to an array/string creates a completely new object every time, using a lot of memory. For smaller operations this is negligible but is very noticeable the larger the data.
+
 **ArrayList**
+
 ```powershell
 $list = [Collections.ArrayList]::new()
 ```
+
 **LinkedList**
+
 ```powershell
 $list = [Collections.Generic.LinkedList[string]]::new()
 ```
+
 **StringBuilder**
+
 ```powershell
 $builder = [Text.StringBuilder]::new()
 ```
 <!--INCOMPLETE-->
+
 ## Write-Host
+
 The `Write-Host` command sends output directly to the console host. It is better to directly invoke `[Console]::WriteLine()`, and better yet to use `Write-Output`.
+
 ## Functions/Script Blocks
+
 Function calls introduce overhead, so it is better to loop inside a function `N` times than to loop a function `N` times. Commands that use script blocks are also costly, so wrapping script block code in a function improves speed. (unclear why)
+
 ## foreach vs ForEach-Object
+
 The `foreach` loop is faster than `ForEach-Object` in completion but more memory intensive. Individual results also show faster in `ForEach-Object` because only one item is loaded at a time, but there is no way to break/continue.
 
 # OBSOLETE SYNTAX
+
 ## Shebang (not obsolete)
+
 ```powershell
 #!/usr/bin/env pwsh
 ```
+
 ## PowerShell 7+/.NET Core
+
 With PowerShell moving to .NET Core on version 7 to make it cross platform, quite a few things changed. Read about them [here](https://docs.microsoft.com/en-us/powershell/scripting/whats-new/differences-from-windows-powershell?view=powershell-5.1).
 <!--INCOMPLETE-->
+
 ## Windows PowerShell Version Differences
+
 Windows PowerShell has minor differences between each major release (2.0-5.x). Read about them [here](https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/whats-new/what-s-new-in-windows-powershell-50?view=powershell-5.1)
 <!--INCOMPLETE-->
+
+# INTERNAL VARIABLES
+
+## Get the location to the `pwsh` binary
+
+```powershell
+$PSHOME
+```
+
+## Get the version of the current running `pwsh` process
+
+```powershell
+# Via Host (emulator dependent)
+$Host.Version
+# Via engine
+$PSVersionTable.PSVersion
+```
+
+## Open the user's preferred text editor
+
+```powershell
+# NOTE: Uses Window Manager defaults
+Invoke-Item $file
+```
+
+## Get the name of the current function
+
+```powershell
+# Simple
+$MyInvocation.MyCommand
+
+# Current function
+(Get-PSCallStack)[0]
+
+# Parent function
+(Get-PSCallStack)[1]
+
+# So on and so forth
+(Get-PSCallStack)[2]
+(Get-PSCallStack)[3]
+
+# All functions including parents
+Get-PSCallStack
+```
+
+## Get the host-name of the system
+
+```powershell
+[Environment]::MachineName
+```
+
+## Get the architecture of the Operating System
+
+```powershell
+# Normal
+[Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture
+
+# Just Bit Width
+[Environment]::Is64BitOperatingSystem
+```
+
+## Get the name of the Operating System / Kernel
+
+```powershell
+[Environment]::OSVersion
+
+# Alternative
+[Runtime.InteropServices.RuntimeInformation]::OSDescription
+
+# Automatic Variables
+$IsLinux
+$IsWindows
+$IsMacOS
+```
+
+## Get the current working directory
+
+```powershell
+$PWD
+```
+
+## Get the number of seconds the script has been running
+
+```powershell
+(Get-History -Count 1).EndExecutionTime - (Get-History 1).StartExecutionTime
+```
+
+## Get a pseudorandom integer
+
+```powershell
+Get-Random
+```
+
+# INFORMATION ABOUT THE TERMINAL
+
+## Get the terminal size in lines and columns (*from a script*)
+
+```powershell
+$Host.UI.RawUI.WindowSize
+```
+
+## Get the current cursor position
+
+```powershell
+$Host.UI.RawUI.CursorPosition
+```
+
+# CONVERSION
+
+## Convert a hex color to RGB
+
+**Example Function:**
+
+```pwsh
+function hex_to_rgb {
+    # Usage: hex_to_rgb "#FFFFFF"
+    #        hex_to_rgb "000000"
+    $c = [Drawing.Color]::FromArgb([Convert]::ToInt32($args[0].TrimStart("#"),16))
+    $c.R,$c.G,$c.B -join " "
+}
+```
+
+**Example Usage:**
+
+```powershell
+PS>hex_to_rgb "#FFFFFF"
+255 255 255
+```
+
+## Convert an RGB color to hex
+
+**Example Function:**
+
+```pwsh
+function rgb_to_hex {
+    # Usage: rgb_to_hex r g b
+    "#"+[Drawing.Color]::FromArgb($args[0],$args[1],$args[2]).Name.Substring(2).ToUpper()
+}
+```
+
+**Example Usage:**
+
+```powershell
+PS>rgb_to_hex 255 255 255
+#FFFFFF
+```
+
+# CODE GOLF
+
+## Shorter `for` loop syntax
+
+```powershell
+# ForEach-Object
+1..10|%{$_}
+# foreach loop
+foreach($i in 1..10){$i}
+# for loop
+for($i=0;$i++ -lt 10;){$i}
+```
+
+## Shorter infinite loops
+
+```powershell
+# Normal method
+while(1){"hi"}
+
+# Shorter
+for(;;){"hi"}
+```
+
+## Simpler `case` statement to set variable
+
+```powershell
+# Example code: doesn't do anything
+$os = switch -Wildcard ($OSTYPE){
+    "darwin*"{"MacOS"}
+    "linux*"{"Linux"}
+    "*bsd*"{"BSD"}
+    "win32"{"Windows"}
+}
+```
+
+# OTHER
+
+## Use `Start-Sleep` as an alternative to the `sleep` command
+
+```powershell
+Start-Sleep 1
+Start-Sleep 0.1
+Start-Sleep 30
+```
+
+## Check if a program is in the user's PATH
+
+```powershell
+Get-Command executable_name -CommandType Application -ErrorAction Ignore
+```
+
+## Get the current date using `Get-Date`
+
+```powershell
+Get-Date -Format "ddd dd MMM - hh:mm tt"
+```
+
+## Get the username of the current user
+
+```powershell
+[Environment]::UserName
+```
+
+## Generate a UUID V4
+
+```powershell
+New-Guid
+```
+
+## Progress bars
+
+```powershell
+# NOTE: Activity is required default parameter
+Write-Progress "[Title]" -PercentComplete $Elapsed
+
+# Set total length in chars (PowerShell 7.2+)
+$PSStyle.Progress.MaxWidth = 18
+# 0 for whole console, minimum 18, default 120
+```
+
+## Get the list of functions in a script
+
+```powershell
+Get-ChildItem Function:
+```
+
+## Bypass shell aliases
+
+```powershell
+echo "Using PowerShell's Write-Output"
+
+# Save alias data and delete it
+$alias = Get-Alias "echo"
+Remove-Item "Alias:echo"
+
+echo "Using echo from PATH"
+
+# Restore alias
+Set-Alias $alias.Name -Value $alias.Definition
+```
+
+## Bypass shell functions
+
+```powershell
+# Save function data and delete it
+$function = Get-Item "Function:prompt"
+Remove-Item "Function:prompt"
+# Prompt now displays "PS>"
+
+# Restore function
+Set-Content "Function:prompt" $function
+```
+
+## Run a command in the background
+
+```powershell
+Start-Process ./some_script.ps1
+
+# On *nix systems
+Start-Process nohup 'pwsh -noprofile -c "./some_script.ps1"'
+```
+<!--INCOMPLETE-->
+
+## Capture the return value of a function without command substitution
+
+This uses reference types to avoid using `$var=$(some_func)` style command substitution for function output capture.
+
+```pwsh
+function to_upper(){
+    $input+$args | % {
+        $_.Value = $_.Value.ToUpper()
+    }
+}
+
+$foo=[ref]"bar"
+to_upper $foo
+$foo # BAR
+```
